@@ -1,0 +1,88 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand navbar-brand-custom me-2" href="/home">
+      <span class="primary-pink-text"><%= projectNamePart1 %></span>
+      <span class="secondary-pink-text"><%= projectNamePart2 %></span>
+    </a>
+
+    <!-- Toggler -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible Content -->
+    <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+      <!-- Left-aligned Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Libri -->
+        <li class="nav-item">
+          <a class="nav-link" href="/libri">Libri</a>
+        </li>
+
+        <!-- Zaini -->
+        <li class="nav-item">
+          <a class="nav-link" href="/zaini">
+            Zaini
+          </a>
+        </li>
+
+        <!-- Abiti -->
+        <li class="nav-item">
+          <a class="nav-link" href="/abiti">Abiti</a>
+        </li>
+
+        <!-- Cancelleria -->
+        <li class="nav-item">
+          <a class="nav-link" href="/cancelleria">Cancelleria</a>
+        </li>
+
+        <!-- Corsi Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle disabled" href="#" id="corsiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Corsi
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="corsiDropdown">
+            <li><a class="dropdown-item" href="/corsi/scrittore">Scrittore</a></li>
+            <li><a class="dropdown-item" href="/corsi/poeta">Poeta</a></li>
+          </ul>
+        </li>
+
+        <!-- Pubblicazioni -->
+        <li class="nav-item">
+          <a class="nav-link disabled" href="/pubblicazioni">Pubblicazioni</a>
+        </li>
+
+        <!-- Promozioni -->
+        <li class="nav-item">
+          <a class="nav-link disabled" href="/promozioni">Promozioni</a>
+        </li>
+
+        <!-- Utenti -->
+        <li class="nav-item">
+          <a class="nav-link" href="/utenti">Utenti</a>
+        </li>
+      </ul>
+
+      <!-- Right-aligned User Info and Logout -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item me-2">
+          <span class="navbar-text d-flex align-items-center primary-pink-text">
+            <%= user.role.name %> <%= user.name %>
+          </span>
+        </li>
+        <li class="nav-item me-4">
+          <div class="navbar-text d-flex align-items-center primary-pink-text">
+            <img src="https://mc-heads.net/avatar/<%= user.name %>" class="has-tooltip" title="Testa di <%= user.name %>" width="20" height="20">
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">
+            <i class="fas fa-right-from-bracket"></i> Esci 
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
