@@ -62,7 +62,7 @@ sequelize
     });
   })
   .catch((error) => {
-    console.error('Errore durante la sincronizzazione del dtabase:', error);
+    console.error('Errore durante la sincronizzazione del database:', error);
   });
 
 // Avvio script bot.js (se presente)
