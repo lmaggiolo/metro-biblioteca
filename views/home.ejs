@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- FontAwesome CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link href="/css/styles.css" rel="stylesheet">
+  <title><%= projectName %> - Home</title>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
+
+  <!-- Inizia il contenitore con lo sfondo -->
+  <div class="center-content bg-img">
+    <div class="text-center">
+      <h1 class="brand-title welcome-title">
+        <span class="primary-pink-text">Benvenuto in</span>
+      </h1>
+      <h1 class="brand-title welcome-title">
+        <span class="secondary-pink-text"><%= projectNamePart2 %></span>
+        <span class="primary-pink-text">!</span>
+      </h1>
+    </div>
+    <!-- Usato per creare lo screenshot-banner -->
+    <!-- <div class="text-center">
+      <h1 class="brand-title welcome-title">
+        <span class="primary-pink-text"><%= projectNamePart1 %></span>
+        <span class="secondary-pink-text"><%= projectNamePart2 %></span>
+      </h1>
+    </div> -->
+  </div>
+
+  <!-- Include Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

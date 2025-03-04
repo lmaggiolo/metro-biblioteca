@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- FontAwesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <link href="/css/styles.css" rel="stylesheet" />
+    <title><%= projectName %> - Utenti</title>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <%- include('partials/navbar') %>
+
+    <div class="center-content bg-gradient p-2" id="main-content">
+      <div class="user-skin d-none d-lg-block">
+        <!-- <img src="https://mc-heads.net/body/<%= user.name %>/right" class="has-tooltip" title="Avatar di <%= user.name %>"> -->
+        <!-- Canvas for skinview3d -->
+        <canvas 
+          id="skinCanvas"
+          data-username="<%= user.name %>"
+          class="has-tooltip" 
+          title="Avatar di <%= user.name %>"
+        ></canvas>
+      </div>
+      <div class="container">
+        <!-- Alert Messaggi -->
+        <% if (messages && messages.success && messages.success.length > 0) { %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <% messages.success.forEach(function(message){ %>
+              <p style="white-space: pre-line;"><%= message %></p>
+            <% }); %>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+          </div>
+        <% } %>
+        <!-- Titolo e Bottone per aggiungere utente -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h1><i class="fas fa-users"></i> Lista degli Utenti</h1>
+          <!-- Bottone "Aggiungi Utente" -> visibile solo se currentUserPriority <= 4, ad esempio -->
+          <% if (isPrivileged || currentUserPriority <= 4) { %>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+              <i class="fas fa-plus"></i> Aggiungi Utente
+            </button>
+          <% } %>
+        </div>
+
+        <!-- Contatore Utenti -->
+        <p class="mb-1">
+          Numero di utenti trovati: <strong><%= count %></strong>
+        </p>
+        
+        <!-- Form di ricerca per Nome e Ruolo su una sola riga -->
+        <form method="get" action="/utenti" class="mb-3">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text icon-background search-icon text-white">
+                  <i class="fas fa-user"></i>
+                </span>
+                <input type="text" class="form-control" id="searchName" name="searchName" placeholder="Ricerca per Nome Utente" value="<%= searchName %>">
+                <button type="button" class="btn btn-outline-secondary clear-input" data-input-id="searchName">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text icon-background search-icon text-white">
+                  <i class="fas fa-user-tag"></i>
+                </span>
+                <select class="form-select" name="searchRole">
+                  <option value="">Tutti i Ruoli</option>
+                  <% roles.forEach(function(role) { %>
+                    <option value="<%= role.id %>" <%= searchRole == role.id ? 'selected' : '' %>>
+                      <%= role.name %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-4 d-flex justify-content-end">
+              <div class="btn-group">
+                <button type="submit" class="btn btn-outline-success">
+                  <i class="fas fa-search"></i> Cerca
+                </button>
+                <a href="/utenti" class="btn btn-outline-secondary">
+                  <i class="fas fa-times"></i> Annulla
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
+    
+        <!-- Tabella Utenti -->
+        <div class="table-responsive">
+          <table class="table table-dark table-striped">
+            <!-- Table Head -->
+            <thead>
+              <tr>
+                <!-- Colonna Testa: Sempre visibile -->
+                <th>
+                  Testa
+                </th>
+                
+                <!-- Colonna Nickname: Sempre visibile -->
+                <th>
+                  <a href="/utenti?sortField=name&sortOrder=<%= sortField === 'name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Nickname
+                    <i class="fas fa-sort-<%= sortField === 'name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Ruolo: Visibile da md in su -->
+                <th class="d-none d-md-table-cell">
+                  <a href="/utenti?sortField=role.name&sortOrder=<%= sortField === 'role.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Ruolo
+                    <i class="fas fa-sort-<%= sortField === 'role.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Telegram: Visibile da lg in su -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/utenti?sortField=telegram_account&sortOrder=<%= sortField === 'telegram_account' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Telegram
+                    <i class="fas fa-sort-<%= sortField === 'telegram_account' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Ultimo Accesso: Visibile a partire da sm -->
+                <th class="d-none d-sm-table-cell">
+                  <a href="/utenti?sortField=lastAccess&sortOrder=<%= sortField === 'lastAccess' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Ultimo Accesso
+                    <i class="fas fa-sort-<%= sortField === 'lastAccess' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Inserito Da: Visibile da md in su -->
+                <th class="d-none d-md-table-cell">
+                  <a href="/utenti?sortField=inserter.name&sortOrder=<%= sortField === 'inserter.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Inserito Da
+                    <i class="fas fa-sort-<%= sortField === 'inserter.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Data Inserimento: Visibile da md in su -->
+                <th class="d-none d-md-table-cell">
+                  <a href="/utenti?sortField=createdAt&sortOrder=<%= sortField === 'createdAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Data Inserimento
+                    <i class="fas fa-sort-<%= sortField === 'createdAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Modificato Da: Visibile da lg in su -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/utenti?sortField=updater.name&sortOrder=<%= sortField === 'updater.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Modificato Da
+                    <i class="fas fa-sort-<%= sortField === 'updater.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Data Modifica: Visibile da lg in su -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/utenti?sortField=updatedAt&sortOrder=<%= sortField === 'updatedAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchRole=<%= encodeURIComponent(searchRole || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Data Modifica
+                    <i class="fas fa-sort-<%= sortField === 'updatedAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                
+                <!-- Colonna Azioni: Sempre visibile -->
+                <th>
+                  Azioni
+                </th>
+              </tr>
+            </thead>
+                        
+            <!-- Table Body -->
+            <tbody>
+              <% users.forEach(user => { %>
+                <tr>
+                  <!-- Colonna Avatar: visibile da sm in su -->
+                  <td>
+                    <!-- <img src="https://mc-heads.net/avatar/<%= user.name %>" class="has-tooltip" title="Testa di <%= user.name %>" width="30" height="30"> -->
+                    <img src="https://minotar.net/armor/bust/<%= user.name %>/30.png" class="has-tooltip" title="Skin di <%= user.name %>">
+                  </td>
+                  <!-- Colonna Nickname: sempre visibile -->
+                  <td><%= user.name %></td>
+                  <!-- Colonna Ruolo: visibile da md in su -->
+                  <td class="d-none d-md-table-cell"><%= user.role.name %></td>
+                  <!-- Colonna Telegram: visibile da lg in su -->
+                  <td class="d-none d-lg-table-cell"><%= user.telegram_account %></td>
+                  <!-- Colonna Ultimo Accesso: visibile da sm in su -->
+                  <td class="d-none d-sm-table-cell">
+                    <%= user.lastAccess ? user.lastAccess.toLocaleString() : '-' %>
+                  </td>
+                  <!-- Colonna Inserito Da: visibile da md in su -->
+                  <td class="d-none d-md-table-cell">
+                    <%= (user.inserter && user.inserter.name) ? user.inserter.name : '-' %>
+                  </td>
+                  <!-- Colonna Data Inserimento: visibile da md in su -->
+                  <td class="d-none d-md-table-cell">
+                    <%= user.createdAt ? user.createdAt.toLocaleString() : '-' %>
+                  </td>
+                  <!-- Colonna Modificato Da: visibile da lg in su -->
+                  <td class="d-none d-lg-table-cell">
+                    <%= user.updater && user.updater.name ? user.updater.name : '-' %>
+                  </td>
+                  <!-- Colonna Data Modifica: visibile da lg in su -->
+                  <td class="d-none d-lg-table-cell">
+                    <%= user.updatedAt ? user.updatedAt.toLocaleString() : '-' %>
+                  </td>
+                  <!-- Colonna Azioni: sempre visibile -->
+                  <td>
+                    <div class="d-flex flex-column flex-sm-row align-items-start">
+                      <% if (isPrivileged || (user.id === currentUserId || currentUserPriority < user.role.priority)) { %>
+                        <button class="btn btn-primary btn-sm m-1 has-tooltip"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal<%= user.id %>"
+                                aria-label="Modifica"
+                                title="Modifica questo utente">
+                          <i class="fas fa-pencil fs-5"></i>
+                        </button>
+                      <% } %>
+                      <% if (isPrivileged || (user.id === currentUserId || currentUserPriority < user.role.priority)) { %>
+                        <button class="btn btn-danger btn-sm m-1 has-tooltip"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal<%= user.id %>"
+                                aria-label="Elimina"
+                                title="Elimina questo utente">
+                          <i class="fas fa-trash-can fs-5"></i>
+                        </button>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+            
+          </table>
+        </div>
+
+        <!-- Add User Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Aggiungi Nuovo Utente</h5>
+                <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <form action="/utenti" method="post">
+                <div class="modal-body">
+                  <% if (messages && messages.error && messages.modal === 'addModal') { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      <% messages.error.forEach(function(message) { %>
+                        <p style="white-space: pre-line;"><%= message %></p>
+                      <% }); %>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                    </div>
+                  <% } %>
+                  <div class="mb-3">
+                    <label for="userNameAdd" class="form-label">Nome</label>
+                    <input type="text" class="form-control bg-dark text-white" id="userNameAdd" name="name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="telegramAccountAdd" class="form-label">Telegram</label>
+                    <input type="text" class="form-control bg-dark text-white" id="telegramAccountAdd" name="telegram_account" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="roleAdd" class="form-label">Ruolo</label>
+                    <select class="form-select bg-dark text-white" id="roleAdd" name="roleId" required>
+                      <option value="">Seleziona Ruolo</option>
+                      <% roles.forEach(function(role) { %>
+                        <option value="<%= role.id %>"><%= role.name %></option>
+                      <% }); %>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                  <button type="submit" class="btn btn-primary">Aggiungi Utente</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Edit User Modal Example -->
+        <% users.forEach(user => { %>
+          <div class="modal fade" id="editModal<%= user.id %>" tabindex="-1" aria-labelledby="editModalLabel<%= user.id %>" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editModalLabel<%= user.id %>">
+                    Modifica Utente - <%= user.name %>
+                    <% if (user.id === currentUserId) { %>
+                      <br>
+                      <small>(Stai modificando il tuo account)</small>
+                    <% } %>
+                  </h5>
+                  <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <form action="/utenti/<%= user.id %>/edit" method="post">
+                  <div class="modal-body">
+                    <% if (messages && messages.error && messages.modal === ('editModal' + user.id)) { %>
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <% messages.error.forEach(function(message) { %>
+                          <p style="white-space: pre-line;"><%= message %></p>
+                        <% }); %>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                      </div>
+                    <% } %>
+                    <div class="mb-3">
+                      <label for="userName<%= user.id %>" class="form-label">Nome</label>
+                      <input type="text" class="form-control bg-dark text-white" id="userName<%= user.id %>" name="name" value="<%= user.name %>" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="telegramAccount<%= user.id %>" class="form-label">Telegram</label>
+                      <input type="text" class="form-control bg-dark text-white" id="telegramAccount<%= user.id %>" name="telegram_account" value="<%= user.telegram_account %>" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="roleEdit<%= user.id %>" class="form-label">Ruolo</label>
+                      <select class="form-select bg-dark text-white" id="roleEdit<%= user.id %>" name="roleId" required <%= user.id === currentUserId ? 'disabled' : '' %>>
+                        <% roles.forEach(function(role) { %>
+                          <option value="<%= role.id %>" <%= (user.role && (user.roleId == role.id)) ? 'selected' : '' %>>
+                            <%= role.name %>
+                          </option>
+                        <% }); %>
+                      </select>
+                      <% if (user.id === currentUserId) { %>
+                        <!-- Se si sta modificando il proprio account, includi il campo hidden per inviare il ruolo corrente -->
+                        <input type="hidden" name="roleId" value="<%= user.role ? user.role.id : '' %>">
+                        <small class="text-muted">Non puoi modificare il ruolo del tuo account</small>
+                      <% } %>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-primary" <%= user.id === currentUserId ? 'disabled' : '' %>>Salva Modifiche</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delete User Modal -->
+          <% users.forEach((user) => { %>
+            <div class="modal fade" id="deleteModal<%= user.id %>" tabindex="-1" aria-labelledby="deleteModalLabel<%= user.id %>" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel<%= user.id %>">
+                      Elimina Utente - <%= user.name %>
+                      <% if (user.id === currentUserId) { %>
+                        <br>
+                        <small>(Stai eliminando il tuo account)</small>
+                      <% } %>
+                    </h5>
+                    <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <% if (messages && messages.error && messages.modal === ('deleteModal' + user.id)) { %>
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <% messages.error.forEach(function(errorMsg) { %>
+                          <p><%= errorMsg %></p>
+                        <% }); %>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                      </div>
+                    <% } %>
+                    Sei sicuro di voler eliminare l'utente <strong><%= user.name %></strong>?
+                  </div>
+                  <div class="modal-footer">
+                    <form action="/utenti/<%= user.id %>/delete" method="post">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                      <button type="submit" class="btn btn-danger">Elimina</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% }); %>       
+        
+        <!-- Pagination and Limit Selector -->
+        <form method="get" action="/utenti" class="mb-3">
+          <input type="hidden" name="searchName" value="<%= searchName %>">
+          <input type="hidden" name="searchRole" value="<%= searchRole %>">
+          <input type="hidden" name="sortField" value="<%= sortField %>">
+          <input type="hidden" name="sortOrder" value="<%= sortOrder %>">
+          <input type="hidden" name="page" value="<%= currentPage %>">
+          <div class="row align-items-center table-footer">
+            <div class="col-12 col-md-8">
+              <nav aria-label="Page navigation">
+                <ul class="pagination flex-wrap mb-0">
+                  <% 
+                    const maxPageButtons = 7;
+                    const pageOffset = Math.floor(maxPageButtons / 2);
+                    let startPage = Math.max(currentPage - pageOffset, 1);
+                    let endPage = Math.min(currentPage + pageOffset, totalPages);
+                    if ((endPage - startPage) < (maxPageButtons - 1)) {
+                      if (startPage === 1) {
+                        endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
+                      } else if (endPage === totalPages) {
+                        startPage = Math.max(endPage - maxPageButtons + 1, 1);
+                      }
+                    }
+                    if (currentPage > 1) { 
+                  %>
+                    <li class="page-item">
+                      <a class="page-link" href="/utenti?page=<%= currentPage - 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName) %>&searchRole=<%= encodeURIComponent(searchRole) %>&sortField=<%= encodeURIComponent(sortField) %>&sortOrder=<%= encodeURIComponent(sortOrder) %>">
+                        <i class="fas fa-angle-left"></i>
+                      </a>
+                    </li>
+                  <% } %>
+                  <% for (let i = startPage; i <= endPage; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="/utenti?page=<%= i %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName) %>&searchRole=<%= encodeURIComponent(searchRole) %>&sortField=<%= encodeURIComponent(sortField) %>&sortOrder=<%= encodeURIComponent(sortOrder) %>">
+                        <%= i %>
+                      </a>
+                    </li>
+                  <% } %>
+                  <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                      <a class="page-link" href="/utenti?page=<%= currentPage + 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName) %>&searchRole=<%= encodeURIComponent(searchRole) %>&sortField=<%= encodeURIComponent(sortField) %>&sortOrder=<%= encodeURIComponent(sortOrder) %>">
+                        <i class="fas fa-angle-right"></i>
+                      </a>
+                    </li>
+                  <% } %>
+                </ul>
+              </nav>
+            </div>
+            <div class="col-12 col-md-4 mt-3 mt-md-0">
+              <div class="d-flex justify-content-md-end align-items-center">
+                <label for="limit" class="me-2 mb-0">Utenti per pagina:</label>
+                <select name="limit" id="limit" class="form-select w-auto" onchange="this.form.submit()">
+                  <option value="10" <%= limit == 10 ? 'selected' : '' %>>10</option>
+                  <option value="50" <%= limit == 50 ? 'selected' : '' %>>50</option>
+                  <option value="100" <%= limit == 100 ? 'selected' : '' %>>100</option>
+                  <option value="500" <%= limit == 500 ? 'selected' : '' %>>500</option>
+                  <option value="all" <%= limit === 'all' ? 'selected' : '' %>>Tutti</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script personalizzati -->
+    <script src="/js/modal.js"></script>
+    <script src="/js/tooltip.js"></script>
+    <script type="module" src="/js/skinViewer.js"></script>
+    <script src="/js/clearField.js"></script>
+
+    <!-- Script per riaprire la modale in caso di errori e per il clear input -->
+    <script>
+      <% if (messages && messages.error && messages.error.length > 0 && messages.modal) { %>
+        document.addEventListener('DOMContentLoaded', function() {
+          var modalId = '<%= messages.modal %>';
+          var myModal = new bootstrap.Modal(document.getElementById(modalId));
+          myModal.show();
+        });
+      <% } %>
+    </script>
+  </body>
+</html>

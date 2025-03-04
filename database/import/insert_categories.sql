@@ -1,0 +1,23 @@
+insert INTO categories (name) VALUES 
+    ('Avventura'),
+    ('Biografia'),
+    ('Boxs'),
+    ('Comico'),
+    ('Diario'),
+    ('Drammatico'),
+    ('Erotico'),
+    ('Fantascienza'),
+    ('Fantasy'),
+    ('Fiaba'),
+    ('Giallo'),
+    ('Horror'),
+    ('Informativo'),
+    ('Letteratura'),
+    ('Manga'),
+    ('Poetico'),
+    ('Romantico'),
+    ('Saghe'),
+    ('Scolastico'),
+    ('Storico'),
+    ('Thriller')
+;

@@ -1,0 +1,715 @@
+/* Dark Theme Styles */
+
+@font-face {
+  font-family: 'Chocolate';
+  src: url('/fonts/Chocolate.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cafe Matcha';
+  src: url('/fonts/Cafe Matcha.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --primary-pink: #cb7282;
+  --secondary-pink: #bc5c6d;
+  --primary-purple: #8A2BE2;
+  --hover-pink: #a75060;
+  --hover-purple: #BA55D3;
+  --shadow-pink: #a75060a4;
+  --dark-bg: #1e1e1e;
+  --dark-bg-hover: #2c2c2c;
+  --disabled-color-text: #78818a;
+  --disabled-color-bg: #3d3e41;
+  --text-color: #ffffff;
+  --placeholder-color: #cacaca;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+}
+
+body {
+  color: var(--text-color);
+  position: relative;
+}
+
+h1 {
+  font-family: 'Cafe Matcha', sans-serif;
+}
+
+* {
+  scrollbar-color: var(--dark-bg) var(--dark-bg-hover);
+}
+
+.container {
+  margin-top: 70px;
+}
+
+.user-skin {
+  margin: 70px 0 0 auto;
+}
+
+.bg-img {
+  background-image: url('/imgs/sfondo-home.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: darken;
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, var(--primary-pink), var(--secondary-pink), var(--dark-bg)) !important;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.custom-container {
+  width: 50%;
+  /* Adjust this value as needed */
+  max-width: 600px;
+  /* Ensure it doesn't exceed a certain width */
+  margin: 0 auto;
+  /* Center the container */
+  background-color: var(--dark-bg);
+  /* Optional: match the background */
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.brand-title,
+.welcome-title,
+.navbar-brand-custom {
+  font-family: 'Chocolate', sans-serif;
+  color: var(--primary-pink) !important;
+  /* text-decoration: underline; */
+  text-underline-offset: 30px;
+  text-decoration-color: var(--primary-pink);
+  /* Space below the title */
+  transition: color 0.3s ease;
+  text-shadow: 3px 3px 0 black,
+    -3px 3px 0 black,
+    3px -3px 0 black,
+    -3px -3px 0 black;
+  display: flex;
+  align-items: center;
+  gap: 0.16em; /* Adjust spacing as needed */
+}
+
+.brand-title.welcome-title {
+  font-size: clamp(2rem, 12.5vw, 12.5rem) !important;
+  text-underline-offset: 5px;
+  text-shadow:
+    clamp(1px, 0.1vw, 2px) clamp(1px, 0.1vw, 2px) 0 black,
+    calc(-1 * clamp(1px, 0.1vw, 2px)) clamp(1px, 0.1vw, 2px) 0 black,
+    clamp(1px, 0.1vw, 2px) calc(-1 * clamp(1px, 0.1vw, 2px)) 0 black,
+    calc(-1 * clamp(1px, 0.1vw, 2px)) calc(-1 * clamp(1px, 0.1vw, 2px)) 0 black;
+  display: flex;
+  justify-content: center;
+}
+
+.brand-title {
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 6rem !important;
+  text-underline-offset: 15px;
+  text-shadow: 1px 1px 0 black,
+    -1px 1px 0 black,
+    1px -1px 0 black,
+    -1px -1px 0 black;
+}
+
+.navbar-brand-custom {
+  font-size: 2rem;
+  text-underline-offset: 5px;
+  text-shadow: 0.25px 0.25px 0 black,
+    -0.25px 0.25px 0 black,
+    0.25px -0.25px 0 black,
+    -0.25px -0.25px 0 black;
+  display: flex;
+  align-items: center;
+  /* Ensure the brand itself is centered */
+}
+
+.navbar {
+  background-color: var(--primary-pink);
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 70px;
+  /* Vertically center items */
+}
+
+.navbar a.navbar-brand,
+.navbar a.nav-link,
+.navbar .navbar-text {
+  color: var(--text-color);
+}
+
+.navbar a.nav-link:hover {
+  color: var(--hover-pink);
+}
+
+.nav-link.disabled, 
+.nav-link.disabled:hover, 
+.nav-link.disabled:focus {
+  color: var(--disabled-color-text) !important;
+  pointer-events: none;
+  text-decoration: none;
+}
+
+
+.form-control,
+.form-control:active,
+.form-control:focus,
+.form-control:focus:active {
+  background-color: var(--dark-bg) !important;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+}
+
+.form-control::placeholder {
+  color: var(--placeholder-color);
+}
+
+.search-input:focus,
+.form-control:focus,
+.search-select:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem var(--hover-pink);
+  border-color: var(--text-color);
+}
+
+.search-icon {
+  font-size: 1.2rem !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus-visible,
+.btn-primary:disabled {
+  background-color: var(--hover-pink) !important;
+  border-color: var(--hover-pink) !important;
+}
+
+.container {
+  background-color: var(--dark-bg);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  /* Add white border */
+}
+
+.modal-content {
+  background-color: var(--dark-bg);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+}
+
+.text-muted {
+  color: var(--text-color) !important;
+}
+
+h1 {
+  font-size: 2.5rem !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-color);
+}
+
+.form-select {
+  appearance: none;
+  background-color: var(--dark-bg) !important;
+  color: var(--text-color);
+  padding-right: 2rem;
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,5" fill="%23ffffff"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.5rem auto;
+}
+
+.form-select:disabled {
+  background-color: var(--disabled-color-bg) !important;
+  color: var(--text-color);
+  cursor: not-allowed;
+}
+
+.primary-pink-text {
+  color: var(--primary-pink) !important;
+}
+
+.secondary-pink-text {
+  color: var(--secondary-pink) !important;
+}
+
+.icon-background {
+  background-color: var(--primary-pink);
+}
+
+/* Styles for Dropdown and Submenu */
+.dropdown-menu {
+  background-color: var(--dark-bg-hover);
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 8px 20px;
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: var(--hover-pink);
+  color: var(--text-color);
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+  display: none;
+  background-color: var(--dark-bg-hover);
+  border-radius: 4px;
+  padding: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-submenu>a::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid var(--text-color);
+  transition: transform 0.3s ease;
+}
+
+.dropdown-submenu:hover>a::after {
+  transform: rotate(90deg);
+  border-left-color: var(--hover-purple);
+}
+
+.small-image {
+  width: 80%;
+  /* Adjusted from 75% to 80% as per the latest context */
+  height: auto;
+  /* Maintain aspect ratio */
+}
+
+/* Styles for the Receipt Sidebar */
+#receipt {
+  position: fixed;
+  top: 70px;
+  right: -325px;
+  width: 325px;
+  height: calc(100% - 70px);
+  background-color: var(--dark-bg-hover);
+  color: var(--text-color);
+  overflow: hidden; /* Hide overflow for the main receipt */
+  transition: right 0.3s ease;
+  z-index: 1000;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  padding: 15px; /* Adjusted padding */
+}
+
+#receipt.show-receipt {
+  right: 0;
+}
+
+#receipt h1 {
+  text-align: center;
+  margin-bottom: 15px; /* Reduced margin */
+  color: var(--primary-pink);
+}
+
+#receipt .form-control {
+  margin-top: 5px; /* Reduced margin */
+}
+
+/* New styles for the container */
+#receipt-items-container {
+  height: 100vh;
+  flex-grow: 0; /* Allow it to grow and fill available space */
+  overflow-y: auto; /* Enable vertical scrolling */
+  margin-bottom: 15px; /* Spacing below the list */
+}
+
+/* Adjust list styles if needed */
+#receipt-items {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+#receipt .list-group-item {
+  color: var(--text-color);
+  background-color: var(--dark-bg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+#receipt .total {
+  font-weight: bold;
+  margin-top: 15px;
+  font-size: 1.2rem;
+  border-top: 1px solid var(--primary-pink);
+  padding-top: 8px;
+}
+
+#receipt .total span:first-child {
+  margin-right: 0.5rem;
+}
+
+.items-wrapper {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 2.5px;
+  box-sizing: border-box;
+}
+
+#checkout-btn {
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+  margin-top: 15px;
+  z-index: 1102; /* Ensure it's above the floating button */
+}
+
+#checkout-btn:hover {
+  background-color: var(--hover-pink);
+  border-color: var(--hover-pink);
+}
+
+#receipt .list-group-item .quantity {
+  width: 65px;
+  background-color: var(--dark-bg-hover);
+  border: 1px solid var(--primary-pink);
+  color: var(--text-color);
+  margin-left: 10px;
+}
+#receipt .list-group-item .remove-item {
+  color: var(--text-color);
+  background: none;
+  border: none;
+}
+
+#receipt .list-group-item .remove-item:hover {
+  color: var(--primary-pink);
+}
+#receipt .total {
+  font-weight: bold;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  border-top: 1px solid var(--primary-pink);
+  padding-top: 10px;
+}
+
+#checkout-btn {
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+
+#checkout-btn:hover {
+  background-color: var(--hover-pink);
+  border-color: var(--hover-pink);
+}
+
+/* Stili per i pulsanti nel receipt */
+.btn-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  color: var(--primary-pink);
+  text-decoration: none;
+}
+
+/* Stili per l'icona di chiusura */
+#close-receipt-btn,
+#clear-receipt-btn,
+.close-btn {
+  font-size: 24px;
+  color: var(--text-color);
+  background: none;
+  border: none;
+}
+
+.close-btn {
+  position: relative;
+  top: 0px;
+}
+
+#close-receipt-btn:hover,
+#clear-receipt-btn:hover,
+.close-btn:hover,
+.close-btn:active {
+  color: var(--primary-pink) !important;
+}
+
+/* Assicurati che il pulsante toggle sia sopra la navbar */
+#toggle-receipt-btn {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 1101;
+  /* Aumenta lo z-index sopra quello della navbar */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-pink);
+  color: var(--text-color);
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+#toggle-receipt-btn:hover {
+  background-color: var(--hover-pink);
+  cursor: pointer;
+}
+
+/* Regola il contenuto principale quando lo scontrino è aperto */
+#main-content {
+  transition: margin-right 0.3s ease;
+}
+
+#main-content.receipt-open {
+  margin-right: 325px;
+  /* Stessa larghezza dello scontrino */
+}
+
+/* Overlay per focalizzare lo scontrino e altri elementi */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 999;
+}
+
+#overlay.active {
+  display: block;
+}
+
+.table th a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.table th a:hover {
+  color: var(--primary-pink);
+}
+
+.table-footer {
+  padding-top: 10px;
+  box-sizing: border-box;
+}
+
+/* Custom Pagination Styles */
+.pagination .page-link {
+    color: var(--text-color);
+    background-color: var(--dark-bg);
+    border: 1px solid var(--primary-pink);
+}
+
+.pagination .page-link:hover,
+.pagination .page-link:focus {
+  color: var(--text-color);
+    background-color: var(--hover-pink) !important;
+    border-color: var(--hover-pink) !important;
+    box-shadow: 0 0 0 0.25rem var(--shadow-pink) !important;
+}
+
+.pagination .page-item.active .page-link {
+  color: var(--text-color);
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: var(--text-color);
+    background-color: var(--dark-bg);
+    border: 1px solid var(--primary-pink);
+}
+
+.pagination .page-link i {
+    /* Adjust the alignment of Font Awesome icons */
+    vertical-align: middle;
+}
+
+.pagination {
+    justify-content: flex-start;
+}
+
+/* Imposta un'altezza fissa alle righe della tabella */
+.table tbody tr td {
+  height: 45px;
+  vertical-align: middle;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Riduci il padding delle celle */
+.table tbody tr td {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+/* Reduce the padding inside the alerts */
+.alert {
+    padding: 0.5rem 1rem; /* Adjust the values as needed */
+}
+
+/* Remove bottom margin from paragraphs inside alerts */
+.alert p {
+    margin-bottom: 0; /* Remove bottom margin */
+}
+
+/* Optional: Adjust the close button */
+.alert-dismissible .btn-close {
+  padding: 0.75rem 0.75rem;
+  color: var(--text-color) !important;
+}
+
+.alert-success {
+  background-color: var(--bs-success) !important;
+  color: var(--text-color) !important;
+}
+
+.alert-danger {
+  background-color: var(--bs-danger) !important;
+  color: var(--text-color) !important;
+}
+
+.on-sale,
+.not-on-sale {
+  display: flex;
+  padding: 5px;
+}
+
+.on-sale {
+  background-color: var(--bs-success) !important;
+}
+
+.not-on-sale {
+  background-color: var(--bs-danger) !important;
+}
+
+.form-group.mb-3 {
+  display: flex;
+  align-items: center;
+}
+
+.input-group .form-control,
+.input-group .clear-input {
+  height: 40px !important; /* Imposta un'altezza fissa */
+  padding: 0.375rem 0.75rem; /* Regola il padding se necessario */
+  margin: 0;
+}
+
+/* Stili per l'alert di successo nel receipt con overlay */
+.receipt-alert.receipt-alert-success {
+  background-color: var(--bs-success);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Fade-out: l'alert scompare spostandosi verso l'alto */
+.receipt-alert.fade-out {
+  opacity: 0;
+  transform: translate(-50%, -100%);
+}
+
+@media (max-width: 1299px) {
+  #receipt {
+    top: 0;
+    /* Instead of right: 0 when closed, push it off-screen */
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    box-shadow: none; /* Optional: remove the box shadow */
+    transition: right 0.3s ease;
+  }
+
+  #receipt.show-receipt {
+    right: 0;
+  }
+
+  /* When the receipt is full screen we likely don't want the main content to shrink */
+  #main-content.receipt-open {
+    margin-right: 0;
+  }
+
+  /* Make sure the toggle button remains visible so users can open/close the receipt */
+  #toggle-receipt-btn {
+    display: block;
+  }
+}

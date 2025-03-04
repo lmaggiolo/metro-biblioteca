@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta e Link -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="current-user-name" content="<%= currentUserName %>">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- FontAwesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link href="/css/styles.css" rel="stylesheet">
+    <title><%= projectName %> - Libri</title>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar') %>
+
+    <!-- Scontrino -->
+    <%- include('partials/receipt') %>
+
+    <!-- Contenitore principale -->
+    <div class="center-content bg-gradient p-2" id="main-content">
+        <div class="container">
+
+            <!-- Alert Messaggi di success -->
+            <% if (messages && messages.success && messages.success.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <% messages.success.forEach(function(message){ %>
+                        <p style="white-space: pre-line;"><%= message %></p>
+                    <% }) %>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                </div>
+            <% } %>
+
+            <!-- Titolo e bottone per aggiungere libro -->
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h1>
+                    <i class="fas fa-book"></i> Lista dei Libri
+                </h1>
+                <% if (isPrivileged || currentUserPriority <= 4) { %>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+                        <i class="fas fa-plus"></i> Aggiungi Libro
+                    </button>
+                <% } %>
+            </div>
+
+            <!-- Counter libri trovati -->
+            <p class="mb-1">
+                Numero di libri trovati: <strong><%= count %></strong>
+            </p>
+
+            <!-- Form di ricerca -->
+            <form method="get" action="/libri" class="mb-1">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text icon-background search-icon text-white">
+                                <i class="fas fa-book-open"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchName" name="searchName" placeholder="Cerca Nome Libro" value="<%= searchName %>">
+                            <button type="button" class="btn btn-outline-secondary clear-input" data-input-id="searchName">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>                        
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text icon-background search-icon text-white">
+                                <i class="fas fa-pen-nib"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchAuthor" name="searchAuthor" placeholder="Cerca Nome Autore" value="<%= searchAuthor %>">
+                            <button type="button" class="btn btn-outline-secondary clear-input" data-input-id="searchAuthor">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>                        
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text icon-background search-icon text-white">
+                                <i class="fas fa-tags"></i>
+                            </span>
+                            <select class="form-select" name="searchCategoryId">
+                                <option value="">Tutte le categorie</option>
+                                <% categories.forEach(function(category) { %>
+                                    <option value="<%= category.id %>" <%= searchCategoryId == category.id ? 'selected' : '' %>>
+                                        <%= category.name %>
+                                    </option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-auto ms-auto">
+                        <div class="btn-group">
+                            <button class="btn btn-outline-success" type="submit">
+                                <i class="fas fa-search"></i> Cerca
+                            </button>
+                            <a href="/libri" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Annulla
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Fine form di ricerca -->
+
+            <!-- Tabella libri -->
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <!-- Ordina per nome libro -->
+                                <a href="/libri?sortField=name&sortOrder=<%= sortField === 'name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                                    Nome
+                                    <i class="fas fa-sort-<%= sortField === 'name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>
+                            <th class="d-none d-sm-table-cell">
+                                <!-- Ordina per nome autore -->
+                                <a href="/libri?sortField=author&sortOrder=<%= sortField === 'author' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                                    Autore
+                                    <i class="fas fa-sort-<%= sortField === 'author' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th class="d-none d-md-table-cell">
+                                <!-- Ordina per categoria del libro -->
+                                <a href="/libri?sortField=category.name&sortOrder=<%= sortField === 'category.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                                    Categoria
+                                    <i class="fas fa-sort-<%= sortField === 'category.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                             
+                            <th class="d-none d-lg-table-cell">
+                                <a href="/libri?sortField=pages&sortOrder=<%= sortField === 'pages' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>"
+                                    class="text-decoration-none text-white">
+                                    Pagine
+                                    <i class="fas fa-sort-<%= sortField === 'pages' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th class="d-none d-sm-table-cell">
+                                <a href="/libri?sortField=price&sortOrder=<%= sortField === 'price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>"
+                                    class="text-decoration-none text-white">
+                                    Prezzo
+                                    <i class="fas fa-sort-<%= sortField === 'price' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th class="d-none d-lg-table-cell">
+                                <a href="/libri?sortField=inserter.name&sortOrder=<%= sortField === 'inserter.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>"
+                                    class="text-decoration-none text-white">
+                                    Inserito Da
+                                    <i class="fas fa-sort-<%= sortField === 'inserter.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th class="d-none d-lg-table-cell">
+                                <a href="/libri?sortField=createdAt&sortOrder=<%= sortField === 'createdAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>"
+                                    class="text-decoration-none text-white">
+                                    Data Inserimento
+                                    <i class="fas fa-sort-<%= sortField === 'createdAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th class="d-none d-lg-table-cell">
+                                <a href="/libri?sortField=updater.name&sortOrder=<%= sortField === 'updater.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>"
+                                    class="text-decoration-none text-white">
+                                    Modificato Da
+                                    <i class="fas fa-sort-<%= sortField === 'updater.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th class="d-none d-lg-table-cell">
+                                <a href="/libri?sortField=updatedAt&sortOrder=<%= sortField === 'updatedAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&limit=<%= limit %>"
+                                    class="text-decoration-none text-white">
+                                    Data Modifica
+                                    <i class="fas fa-sort-<%= sortField === 'updatedAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                                </a>
+                            </th>                                
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% books.forEach(book=> { %>
+                            <tr data-book-id="<%= book.id %>">
+                                <td>
+                                    <span class="<%= book.onSale ? 'on-sale' : 'not-on-sale' %>">
+                                        <%= book.name %>
+                                    </span>
+                                </td>
+                                <td class="d-none d-sm-table-cell">
+                                    <%= book.author %>
+                                </td>
+                                <td class="d-none d-md-table-cell">
+                                    <%= book.category ? book.category.name : 'N/A' %>
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    <%= book.pages %>
+                                </td>
+                                <td class="d-none d-sm-table-cell">
+                                    <%= book.price %> €
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    <%= (book.inserter && book.inserter.name) ? book.inserter.name : '-' %>
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    <%= book.createdAt ? book.createdAt.toLocaleDateString() : '-' %>
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    <%= (book.updater && book.updater.name) ? book.updater.name : '-' %>
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    <%= book.updatedAt ? book.updatedAt.toLocaleDateString() : '-' %>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column flex-sm-row align-items-start">
+                                        <% if (book.onSale) { %>
+                                            <!-- Pulsante Aggiungi allo Scontrino -->
+                                            <button class="btn btn-secondary btn-sm m-1 add-to-receipt has-tooltip"
+                                                aria-label="Aggiungi allo Scontrino" data-bs-toggle="tooltip"
+                                                title="Aggiungi questo libro allo scontrino">
+                                                <i class="fas fa-cart-plus fs-5"></i>
+                                            </button>
+                                        <% } %>
+                                        <% if (isPrivileged || currentUserPriority <= 4) { %>
+                                            <!-- Pulsante Modifica -->
+                                            <button class="btn btn-primary btn-sm m-1 has-tooltip"
+                                                data-bs-toggle="modal" data-bs-target="#editModal<%= book.id %>"
+                                                aria-label="Modifica" title="Modifica questo libro">
+                                                <i class="fas fa-pencil fs-5"></i>
+                                            </button>
+                                        <% } %>
+                                        <% if (isPrivileged || currentUserPriority <= 3) { %>
+                                            <!-- Pulsante Elimina -->
+                                            <button class="btn btn-danger btn-sm m-1 has-tooltip" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal<%= book.id %>" aria-label="Elimina"
+                                                title="Elimina questo libro">
+                                                <i class="fas fa-trash-can fs-5"></i>
+                                            </button>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modals for Each Book -->
+            <% books.forEach(book=> { %>
+                <% if (isPrivileged || currentUserPriority <= 4) { %>
+                    <!-- Edit Book Modal -->
+                    <div class="modal fade" id="editModal<%= book.id %>" tabindex="-1"
+                        aria-labelledby="editModalLabel<%= book.id %>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-dark text-white">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel<%= book.id %>">
+                                        Modifica Libro - <%= book.name %>
+                                    </h5>
+                                    <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal"
+                                        aria-label="Chiudi">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <form action="/libri/<%= book.id %>/edit" method="post">
+                                    <div class="modal-body">
+                                        <!-- Error Handling -->
+                                        <% if (messages && messages.error && messages.modal === 'editModal' + book.id) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <% messages.error.forEach(function (message) { %>
+                                                    <p style="white-space: pre-line;"><%= message %></p>
+                                                <% }) %>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                                            </div>
+                                        <% } %>
+                                        <!-- Form Fields -->
+                                        <div class="mb-3">
+                                            <label for="name<%= book.id %>" class="form-label">Nome</label>
+                                            <input type="text" class="form-control bg-dark text-white" id="name<%= book.id %>" name="name" value="<%= book.name %>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="author<%= book.id %>" class="form-label">Autore</label>
+                                            <input type="text" class="form-control bg-dark text-white" id="author<%= book.id %>" name="author" value="<%= book.author %>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="categoryId<%= book.id %>" class="form-label">Categoria</label>
+                                            <select class="form-select bg-dark text-white" id="categoryId<%= book.id %>" name="categoryId" required>
+                                                <% categories.forEach(function(category) { %>
+                                                    <option value="<%= category.id %>" <%= book.categoryId === category.id ? 'selected' : '' %>> 
+                                                        <%= category.name %>
+                                                    </option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pages<%= book.id %>" class="form-label">Pagine</label>
+                                            <input type="number" class="form-control bg-dark text-white" id="pages<%= book.id %>" name="pages" value="<%= book.pages %>" min="1" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="price<%= book.id %>" class="form-label">Prezzo</label>
+                                            <input type="number" step="1" class="form-control bg-dark text-white" id="price<%= book.id %>" name="price" value="<%= book.price %>" min="1" required>
+                                        </div>
+                                        <div class="mb-3 d-flex align-items-center">
+                                            <label class="form-check-label me-3" for="onSale<%= book.id %>">In Vendita</label>
+                                            <div class="form-check form-switch">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    id="onSale<%= book.id %>"
+                                                    name="onSale"
+                                                    <%= book.onSale ? 'checked' : '' %>
+                                                    style="transform: scale(1.5);"
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Chiudi</button>
+                                        <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+                <% if (currentUserPriority <= 3) { %>
+                    <!-- Delete Book Modal -->
+                    <div class="modal fade" id="deleteModal<%= book.id %>" tabindex="-1"
+                        aria-labelledby="deleteModalLabel<%= book.id %>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-dark text-white">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel<%= book.id %>">Elimina Libro -
+                                        <%= book.name %>
+                                    </h5>
+                                    <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal"
+                                        aria-label="Chiudi">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Error Handling -->
+                                    <% if (messages && messages.error && messages.modal === 'deleteModal' + book.id) { %>
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <% messages.error.forEach(function (message) { %>
+                                                <p style="white-space: pre-line;"><%= message %></p>
+                                            <% }) %>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                                        </div>
+                                    <% } %>
+                                    Sei sicuro di voler eliminare il libro <strong>
+                                        <%= book.name %>
+                                    </strong> dell'author <strong>
+                                        <%= book.author %>
+                                    </strong> ?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="/libri/<%= book.id %>/delete" method="post">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Annulla</button>
+                                        <button type="submit" class="btn btn-danger">Elimina</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <% }) %>
+
+            <!-- Add New Book Modal -->
+            <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-dark text-white">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addModalLabel">Aggiungi Nuovo Libro</h5>
+                            <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal"
+                                aria-label="Chiudi">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form action="/libri" method="post">
+                            <div class="modal-body">
+                                <!-- Error Handling -->
+                                <% if (messages && messages.error && messages.modal === 'addModal') { %>
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <% messages.error.forEach(function (message) { %>
+                                            <p style="white-space: pre-line;"><%= message %></p>
+                                        <% }) %>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                                    </div>
+                                <% } %>
+                                <!-- Form Fields -->
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nome</label>
+                                    <input type="text" class="form-control bg-dark text-white" id="name" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="author" class="form-label">Autore</label>
+                                    <input type="text" class="form-control bg-dark text-white" id="author" name="author" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="categoryId" class="form-label">Categoria</label>
+                                    <select class="form-select bg-dark text-white" id="categoryId" name="categoryId" required>
+                                        <% categories.forEach(function(category) { %>
+                                            <option value="<%= category.id %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pages" class="form-label">Pagine</label>
+                                    <input type="number" class="form-control bg-dark text-white" id="pages" name="pages" min="1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Prezzo</label>
+                                    <input type="number" step="1" class="form-control bg-dark text-white" id="price" name="price" min="1" required>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center">
+                                    <label class="form-check-label me-3" for="onSale">In Vendita</label>
+                                    <div class="form-check form-switch">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            id="onSale"
+                                            name="onSale"
+                                            checked
+                                            style="transform: scale(1.5);"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Chiudi</button>
+                                <button type="submit" class="btn btn-primary">Aggiungi Libro</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination and Limit Selector -->
+            <form method="get" action="/libri" class="mb-1">
+                <!-- Hidden inputs to preserve search and sort parameters -->
+                <input type="hidden" name="searchName" value="<%= searchName %>">
+                <input type="hidden" name="searchAuthor" value="<%= searchAuthor %>">
+                <input type="hidden" name="searchCategoryId" value="<%= searchCategoryId %>">
+                <input type="hidden" name="sortField" value="<%= sortField %>">
+                <input type="hidden" name="sortOrder" value="<%= sortOrder %>">
+                <input type="hidden" name="page" value="<%= currentPage %>">
+                <div class="row align-items-center table-footer">
+                    <div class="col-12 col-md-8">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination flex-wrap mb-0">
+                                <% 
+                                    const maxPageButtons = 7; // Numero massimo di pulsanti di pagina da mostrare
+                                    const pageOffset = Math.floor(maxPageButtons / 2);
+                                    let startPage = Math.max(currentPage - pageOffset, 1);
+                                    let endPage = Math.min(currentPage + pageOffset, totalPages);
+                            
+                                    // Adjust startPage and endPage if necessary
+                                    if ((endPage - startPage) < maxPageButtons - 1) {
+                                        if (startPage === 1) {
+                                            endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
+                                        } else if (endPage === totalPages) {
+                                            startPage = Math.max(endPage - maxPageButtons + 1, 1);
+                                        }
+                                    }
+                            
+                                    // "Previous" button with arrow
+                                    if (currentPage > 1) { 
+                                %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/libri?page=<%= currentPage - 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Previous page">
+                                            <i class="fas fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            
+                                <% // Mostra la prima pagina ed eventualmente "..." se c'è un gap
+                                   if (startPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/libri?page=1&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>">1</a>
+                                    </li>
+                                    <% if (startPage > 2) { %>
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <% } %>
+                                <% } %>
+                            
+                                <% // Pagine da startPage a endPage
+                                   for (let i = startPage; i <= endPage; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="/libri?page=<%= i %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            
+                                <% // Ultima pagina ed eventuale "..."
+                                   if (endPage < totalPages) { %>
+                                    <% if (endPage < totalPages - 1) { %>
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <% } %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/libri?page=<%= totalPages %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>">
+                                            <%= totalPages %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            
+                                <% // "Next" button
+                                   if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/libri?page=<%= currentPage + 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&searchAuthor=<%= encodeURIComponent(searchAuthor || '') %>&searchCategoryId=<%= encodeURIComponent(searchCategoryId || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Next page">
+                                            <i class="fas fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                            
+                        </nav>                                        
+                    </div>
+                    <div class="col-12 col-md-4 mt-3 mt-md-0">
+                        <div class="d-flex justify-content-md-end align-items-center">
+                            <label for="limit" class="me-2 mb-0">Libri per pagina:</label>
+                            <select name="limit" id="limit" class="form-select w-auto" onchange="this.form.submit()">
+                                <option value="10" <%= limit == 10 ? 'selected' : '' %>>10</option>
+                                <option value="50" <%= limit == 50 ? 'selected' : '' %>>50</option>
+                                <option value="100" <%= limit == 100 ? 'selected' : '' %>>100</option>
+                                <option value="500" <%= limit == 500 ? 'selected' : '' %>>500</option>
+                                <option value="all" <%= limit === 'all' ? 'selected' : '' %>>Tutti</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Includi scripts esterni -->
+    <script src="/js/modal.js"></script>
+    <script src="/js/receipt.js"></script>
+    <script src="/js/tooltip.js"></script>
+    <script src="/js/clearField.js"></script>
+
+    <!-- Script per mostrare le modals se ci sono messaggi di errore -->
+    <script>
+        // Controlla se ci sono messaggi di errore e un nome di modale da aprire
+        <% if (messages && messages.error && messages.error.length > 0 && messages.modal) { %>
+          document.addEventListener('DOMContentLoaded', function() {
+            var modalId = '<%= messages.modal %>';
+            var myModal = new bootstrap.Modal(document.getElementById(modalId));
+            myModal.show();
+          });
+        <% } %>
+    </script>
+    
+</body>
+</html>

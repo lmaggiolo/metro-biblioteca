@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta e Link -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="current-user-name" content="<%= currentUserName %>" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- FontAwesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <link href="/css/styles.css" rel="stylesheet" />
+    <title><%= projectName %> - Cancelleria</title>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <%- include('partials/navbar') %>
+
+    <!-- Scontrino -->
+    <%- include('partials/receipt') %>
+
+    <!-- Contenitore principale -->
+    <div class="center-content bg-gradient p-2" id="main-content">
+      <div class="container">
+        <!-- Alert Messaggi di Successo -->
+        <% if (messages && messages.success && messages.success.length > 0) { %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <% messages.success.forEach(function(message){ %>
+              <p style="white-space: pre-line;"><%= message %></p>
+            <% }) %>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+          </div>
+        <% } %>
+
+        <!-- Titolo e Bottone Aggiungi -->
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <h1>
+            <i class="fas fa-paperclip"></i> Lista della Cancelleria
+          </h1>
+          <% if (isPrivileged || currentUserPriority <= 4) { %>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+              <i class="fas fa-plus"></i> Aggiungi Elemento
+            </button>
+          <% } %>
+        </div>
+
+        <!-- Contatore Elementi -->
+        <p class="mb-1">
+          Numero di elementi trovati: <strong><%= count %></strong>
+        </p>
+
+        <!-- Form di Ricerca -->
+        <form method="get" action="/cancelleria" class="mb-1">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text icon-background search-icon text-white">
+                  <i class="fas fa-pencil-ruler"></i>
+                </span>
+                <input type="text" id="searchName" name="searchName" class="form-control" placeholder="Cerca Nome Elemento" value="<%= searchName %>" />
+                <button type="button" class="btn btn-outline-secondary clear-input" data-input-id="searchName">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-8 col-lg-8 d-flex justify-content-end">
+              <div class="btn-group">
+                <button class="btn btn-outline-success" type="submit">
+                  <i class="fas fa-search"></i> Cerca
+                </button>
+                <a href="/cancelleria" class="btn btn-outline-secondary">
+                  <i class="fas fa-times"></i> Annulla
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
+        <!-- Fine Form di Ricerca -->
+
+        <!-- Tabella Elementi Cancelleria -->
+        <div class="table-responsive">
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <!-- Nome -->
+                <th>
+                  <a href="/cancelleria?sortField=name&sortOrder=<%= sortField === 'name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Nome
+                    <i class="fas fa-sort-<%= sortField === 'name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Prezzo Vendita -->
+                <th class="d-none d-md-table-cell">
+                  <a href="/cancelleria?sortField=selling_price&sortOrder=<%= sortField === 'selling_price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Prezzo Vendita
+                    <i class="fas fa-sort-<%= sortField === 'selling_price' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Prezzo Acquisto -->
+                <th class="d-none d-md-table-cell">
+                  <a href="/cancelleria?sortField=purchase_price&sortOrder=<%= sortField === 'purchase_price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Prezzo Acquisto
+                    <i class="fas fa-sort-<%= sortField === 'purchase_price' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Inserito Da -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/cancelleria?sortField=inserter.name&sortOrder=<%= sortField === 'inserter.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Inserito Da
+                    <i class="fas fa-sort-<%= sortField === 'inserter.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Data Inserimento -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/cancelleria?sortField=createdAt&sortOrder=<%= sortField === 'createdAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Data Inserimento
+                    <i class="fas fa-sort-<%= sortField === 'createdAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Modificato Da -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/cancelleria?sortField=updater.name&sortOrder=<%= sortField === 'updater.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Modificato Da
+                    <i class="fas fa-sort-<%= sortField === 'updater.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Data Modifica -->
+                <th class="d-none d-lg-table-cell">
+                  <a href="/cancelleria?sortField=updatedAt&sortOrder=<%= sortField === 'updatedAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                    Data Modifica
+                    <i class="fas fa-sort-<%= sortField === 'updatedAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
+                  </a>
+                </th>
+                <!-- Azioni -->
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% stationeries.forEach(item => { %>
+                <tr data-stationery-id="<%= item.id %>">
+                  <td>
+                    <span class="<%= item.onSale ? 'on-sale' : 'not-on-sale' %>">
+                      <%= item.name %>
+                    </span>
+                  </td>
+                  <td class="d-none d-md-table-cell">
+                    <%= item.selling_price %> €
+                  </td>
+                  <td class="d-none d-md-table-cell">
+                    <%= item.purchase_price %> €
+                  </td>
+                  <td class="d-none d-lg-table-cell">
+                    <%= (item.inserter && item.inserter.name) ? item.inserter.name : '-' %>
+                  </td>
+                  <td class="d-none d-lg-table-cell">
+                    <%= item.createdAt ? item.createdAt.toLocaleDateString() : '-' %>
+                  </td>
+                  <td class="d-none d-lg-table-cell">
+                    <%= (item.updater && item.updater.name) ? item.updater.name : '-' %>
+                  </td>
+                  <td class="d-none d-lg-table-cell">
+                    <%= item.updatedAt ? item.updatedAt.toLocaleDateString() : '-' %>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-column flex-sm-row align-items-start">
+                      <% if (item.onSale) { %>
+                        <!-- Pulsante Aggiungi allo Scontrino -->
+                        <button class="btn btn-secondary btn-sm m-1 add-to-receipt has-tooltip" aria-label="Aggiungi allo Scontrino" data-bs-toggle="tooltip" title="Aggiungi questo elemento allo scontrino">
+                          <i class="fas fa-cart-plus fs-5"></i>
+                        </button>
+                      <% } %>
+                      <% if (isPrivileged || currentUserPriority <= 4) { %>
+                        <!-- Pulsante Modifica -->
+                        <button class="btn btn-primary btn-sm m-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#editModal<%= item.id %>" aria-label="Modifica" title="Modifica questo elemento">
+                          <i class="fas fa-pencil fs-5"></i>
+                        </button>
+                      <% } %>
+                      <% if (isPrivileged || currentUserPriority <= 3) { %>
+                        <!-- Pulsante Elimina -->
+                        <button class="btn btn-danger btn-sm m-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#deleteModal<%= item.id %>" aria-label="Elimina" title="Elimina questo elemento">
+                          <i class="fas fa-trash-can fs-5"></i>
+                        </button>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Fine Tabella -->
+
+        <!-- Modali per ciascun elemento di cancelleria -->
+        <% stationeries.forEach(item => { %>
+          <% if (isPrivileged || currentUserPriority <= 4) { %>
+            <!-- Modale Modifica Elemento -->
+            <div class="modal fade" id="editModal<%= item.id %>" tabindex="-1" aria-labelledby="editModalLabel<%= item.id %>" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel<%= item.id %>">Modifica Elemento - <%= item.name %></h5>
+                    <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <form action="/cancelleria/<%= item.id %>/edit" method="post">
+                    <div class="modal-body">
+                      <% if (messages && messages.error && messages.modal === ('editModal' + item.id)) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                          <% messages.error.forEach(function(message){ %>
+                            <p style="white-space: pre-line;"><%= message %></p>
+                          <% }) %>
+                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                        </div>
+                      <% } %>
+                      <div class="mb-3">
+                        <label for="name<%= item.id %>" class="form-label">Nome</label>
+                        <input type="text" class="form-control bg-dark text-white" id="name<%= item.id %>" name="name" value="<%= item.name %>" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="sellingPrice<%= item.id %>" class="form-label">Prezzo Vendita</label>
+                        <input type="number" class="form-control bg-dark text-white" id="sellingPrice<%= item.id %>" name="selling_price" value="<%= item.selling_price %>" min="1" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="purchasePrice<%= item.id %>" class="form-label">Prezzo Acquisto</label>
+                        <input type="number" class="form-control bg-dark text-white" id="purchasePrice<%= item.id %>" name="purchase_price" value="<%= item.purchase_price %>" min="1" required>
+                      </div>
+                      <div class="mb-3 d-flex align-items-center">
+                        <label class="form-check-label me-3" for="onSale<%= item.id %>">In Vendita</label>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" id="onSale<%= item.id %>" name="onSale" <%= item.onSale ? 'checked' : '' %> style="transform: scale(1.25);">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                      <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% } %>
+          <% if (isPrivileged || currentUserPriority <= 3) { %>
+            <!-- Modale Elimina Elemento -->
+            <div class="modal fade" id="deleteModal<%= item.id %>" tabindex="-1" aria-labelledby="deleteModalLabel<%= item.id %>" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel<%= item.id %>">Elimina Elemento - <%= item.name %></h5>
+                    <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <% if (messages && messages.error && messages.modal === ('deleteModal' + item.id)) { %>
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <% messages.error.forEach(function(message){ %>
+                          <p style="white-space: pre-line;"><%= message %></p>
+                        <% }) %>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                      </div>
+                    <% } %>
+                    Sei sicuro di voler eliminare l'elemento <strong><%= item.name %></strong>?
+                  </div>
+                  <div class="modal-footer">
+                    <form action="/cancelleria/<%= item.id %>/delete" method="post">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                      <button type="submit" class="btn btn-danger">Elimina</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        <% }) %>
+
+        <!-- Modale Aggiunta Nuovo Elemento -->
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Aggiungi Nuovo Elemento</h5>
+                <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <form action="/cancelleria" method="post">
+                <div class="modal-body">
+                  <% if (messages && messages.error && messages.modal === 'addModal') { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      <% messages.error.forEach(function(message) { %>
+                        <p style="white-space: pre-line;"><%= message %></p>
+                      <% }) %>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                    </div>
+                  <% } %>
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Nome</label>
+                    <input type="text" class="form-control bg-dark text-white" id="name" name="name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="selling_price" class="form-label">Prezzo Vendita</label>
+                    <input type="number" class="form-control bg-dark text-white" id="selling_price" name="selling_price" min="1" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="purchase_price" class="form-label">Prezzo Acquisto</label>
+                    <input type="number" class="form-control bg-dark text-white" id="purchase_price" name="purchase_price" min="1" required>
+                  </div>
+                  <div class="mb-3 d-flex align-items-center">
+                    <label class="form-check-label me-3" for="onSale">In Vendita</label>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="onSale" name="onSale" checked style="transform: scale(1.25);">
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                  <button type="submit" class="btn btn-primary">Aggiungi Elemento</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione paginazione e selector per il limite -->
+        <form method="get" action="/cancelleria" class="mb-1">
+          <input type="hidden" name="searchName" value="<%= searchName %>">
+          <input type="hidden" name="sortField" value="<%= sortField %>">
+          <input type="hidden" name="sortOrder" value="<%= sortOrder %>">
+          <input type="hidden" name="page" value="<%= currentPage %>">
+          <div class="row align-items-center table-footer">
+            <div class="col-12 col-md-8">
+              <nav aria-label="Page navigation">
+                <ul class="pagination flex-wrap mb-0">
+                  <% 
+                    const maxPageButtons = 7;
+                    const pageOffset = Math.floor(maxPageButtons / 2);
+                    let startPage = Math.max(currentPage - pageOffset, 1);
+                    let endPage = Math.min(currentPage + pageOffset, totalPages);
+                    if ((endPage - startPage) < maxPageButtons - 1) {
+                      if (startPage === 1) {
+                        endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
+                      } else if (endPage === totalPages) {
+                        startPage = Math.max(endPage - maxPageButtons + 1, 1);
+                      }
+                    }
+                    if (currentPage > 1) { 
+                  %>
+                    <li class="page-item">
+                      <a class="page-link" href="/cancelleria?page=<%= currentPage - 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Previous page">
+                        <i class="fas fa-angle-left"></i>
+                      </a>
+                    </li>
+                  <% } %>
+                  <% if (startPage > 1) { %>
+                    <li class="page-item">
+                      <a class="page-link" href="/cancelleria?page=1&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>">1</a>
+                    </li>
+                    <% if (startPage > 2) { %>
+                      <li class="page-item disabled"><span class="page-link">...</span></li>
+                    <% } %>
+                  <% } %>
+                  <% for (let i = startPage; i <= endPage; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="/cancelleria?page=<%= i %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>"><%= i %></a>
+                    </li>
+                  <% } %>
+                  <% if (endPage < totalPages) { %>
+                    <% if (endPage < totalPages - 1) { %>
+                      <li class="page-item disabled"><span class="page-link">...</span></li>
+                    <% } %>
+                    <li class="page-item">
+                      <a class="page-link" href="/cancelleria?page=<%= totalPages %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>"><%= totalPages %></a>
+                    </li>
+                  <% } %>
+                  <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                      <a class="page-link" href="/cancelleria?page=<%= currentPage + 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Next page">
+                        <i class="fas fa-angle-right"></i>
+                      </a>
+                    </li>
+                  <% } %>
+                </ul>
+              </nav>
+            </div>
+            <div class="col-12 col-md-4 mt-3 mt-md-0">
+              <div class="d-flex justify-content-md-end align-items-center">
+                <label for="limit" class="me-2 mb-0">Elementi per pagina:</label>
+                <select name="limit" id="limit" class="form-select w-auto" onchange="this.form.submit()">
+                  <option value="10" <%= limit == 10 ? 'selected' : '' %>>10</option>
+                  <option value="50" <%= limit == 50 ? 'selected' : '' %>>50</option>
+                  <option value="100" <%= limit == 100 ? 'selected' : '' %>>100</option>
+                  <option value="500" <%= limit == 500 ? 'selected' : '' %>>500</option>
+                  <option value="all" <%= limit === 'all' ? 'selected' : '' %>>Tutti</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script Personalizzati -->
+    <script src="/js/modal.js"></script>
+    <script src="/js/receipt.js"></script>
+    <script src="/js/tooltip.js"></script>
+    <script src="/js/clearField.js"></script>
+    
+    <!-- Script per riaprire la modale in caso di errori -->
+    <script>
+      <% if (messages && messages.error && messages.error.length > 0 && messages.modal) { %>
+        document.addEventListener('DOMContentLoaded', function() {
+          var modalId = '<%= messages.modal %>';
+          var myModal = new bootstrap.Modal(document.getElementById(modalId));
+          myModal.show();
+        });
+      <% } %>
+    </script>
+  </body>
+</html>
