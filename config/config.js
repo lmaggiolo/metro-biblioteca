@@ -14,14 +14,18 @@ module.exports = {
   },
 
   // Configurazione del database
-  database: {
-    // In questo caso usiamo SQLite, come definito in config/database.js
-    dialect: process.env.DB_DIALECT || 'sqlite',
+  database: process.env.DATABASE_URL ? {
+    dialect: 'postgres',
+    protocol: 'postgres',
+    url: process.env.DATABASE_URL,
+    logging: process.env.DB_LOGGING === 'true' ? console.log : false,
+  } : {
+    dialect: 'sqlite',
     storage: process.env.DB_STORAGE || `./database/${dbName}`,
-    logging: process.env.DB_LOGGING === 'true' ? console.log : false
+    logging: process.env.DB_LOGGING === 'true' ? console.log : false,
   },
 
-  // Altre configurazioni globali
+  // Configurazione del logging
   logging: {
     level: process.env.LOG_LEVEL || 'info'
   }
