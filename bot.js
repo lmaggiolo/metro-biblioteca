@@ -3,7 +3,7 @@ const { crypto, encrypt, decrypt } = require('./utils/encryption');
 const { User } = require('./models'); // Importiamo il modello User
 const Role = require('./models/roleModel'); // Importiamo il modello Role
 
-const token = '7672962018:AAGAG50VU63Dvs7E64CvtBR5OeJQIJ7KVDU';
+const token = process.env.BOT_SITO_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 console.log("Bot is running...");
