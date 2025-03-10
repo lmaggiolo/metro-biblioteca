@@ -4,7 +4,7 @@ const config = require('./config');
 let sequelize;
 
 if (config.database.url) {
-  // Connessione a PostgreSQL usando DATABASE_URL
+  // Connessione a PostgreSQL usando DB_URL
   sequelize = new Sequelize(config.database.url, {
     dialect: config.database.dialect,
     protocol: config.database.protocol,

@@ -14,10 +14,10 @@ module.exports = {
   },
 
   // Configurazione del database
-  database: process.env.DATABASE_URL ? {
-    dialect: 'postgres',
-    protocol: 'postgres',
-    url: process.env.DATABASE_URL,
+  database: process.env.DB_URL ? {
+    dialect: process.env.DB_DIALECT,
+    protocol: process.env.DB_PROTOCOL,
+    url: process.env.DB_URL,
     logging: process.env.DB_LOGGING === 'true' ? console.log : false,
   } : {
     dialect: 'sqlite',
