@@ -12,6 +12,7 @@ const bookRoutes = require('./routes/bookRoute');
 const backpackRoutes = require('./routes/backpackRoute');
 const suitRoutes = require('./routes/suitRoute');
 const stationeryRoutes = require('./routes/stationeryRoute');
+const barRoutes = require('./routes/barRoute');
 const receiptRoutes = require('./routes/receiptRoute');
 
 const pkg = require('./package.json');
@@ -50,6 +51,7 @@ app.use('/libri', bookRoutes);
 app.use('/zaini', backpackRoutes);
 app.use('/abiti', suitRoutes);
 app.use('/cancelleria', stationeryRoutes);
+app.use('/bar', barRoutes);
 app.use('/scontrini', receiptRoutes);
 
 sequelize
@@ -66,14 +68,14 @@ sequelize
   });
 
 // Avvio script bot.js (se presente)
-const { spawn } = require('child_process');
-const botProcess = spawn('node', ['bot.js']);
-botProcess.stdout.on('data', data => {
-  console.log(`Output di bot.js: ${data}`);
-});
-botProcess.stderr.on('data', data => {
-  console.error(`Errore di stderr: ${data}`);
-});
-botProcess.on('close', code => {
-  console.log(`bot.js process exited with code ${code}`);
-});
+// const { spawn } = require('child_process');
+// const botProcess = spawn('node', ['bot.js']);
+// botProcess.stdout.on('data', data => {
+//   console.log(`Output di bot.js: ${data}`);
+// });
+// botProcess.stderr.on('data', data => {
+//   console.error(`Errore di stderr: ${data}`);
+// });
+// botProcess.on('close', code => {
+//   console.log(`bot.js process exited with code ${code}`);
+// });

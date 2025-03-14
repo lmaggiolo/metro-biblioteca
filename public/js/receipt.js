@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let storedItems = getStoredItems();
     storedItems = storedItems.filter(item => !(item.itemId === itemId && item.type === type));
     sessionStorage.setItem(getReceiptKey(), JSON.stringify(storedItems));
-  } 
+  }
 
   function updateTotalPrice() {
     let total = 0;
@@ -77,6 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
       endpoint = `/abiti/${itemId}`;
     } else if (type === 'stationery') {
       endpoint = `/cancelleria/${itemId}`;
+    } else if (type === 'barItem') {
+      endpoint = `/bar/${itemId}`;
     }
     return fetch(endpoint).then(response => response.json());
   }
@@ -97,6 +99,12 @@ document.addEventListener('DOMContentLoaded', function () {
       iconClass = 'fas fa-tshirt fs-5';
     } else if (data.type === 'stationery') {
       iconClass = 'fas fa-paperclip fs-5';
+    } else if (data.type === 'barItem') {
+      if (data.type_item === 'Cibo') {
+        iconClass = 'fas fa-burger fs-5';
+      } else {
+        iconClass = 'fas fa-coffee fs-5';
+      }
     }
     li.innerHTML = `
       <div class="d-flex align-items-center">
@@ -144,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
           addedAt: item.addedAt
         }))
     );
-  
+
     Promise.all(fetchPromises)
       .then(results => {
         // Ordina i risultati in base a addedAt (che abbiamo memorizzato in millisecondi)
@@ -159,15 +167,15 @@ document.addEventListener('DOMContentLoaded', function () {
         updateTotalPrice();
         if (receiptItems.childElementCount > 0 && window.innerWidth >= 1300 && !receipt.classList.contains('show-receipt')) {
           openReceipt();
-        }        
+        }
         updateCheckoutButtonState();
       })
       .catch(err => console.error(err));
-  }  
+  }
 
   loadReceiptFromSessionStorage();
 
-  // Gestione evento "Aggiungi allo scontrino" per tutti i tipi 
+  // Gestione evento "Aggiungi allo scontrino" per tutti i tipi
   document.querySelectorAll('.add-to-receipt').forEach(button => {
     button.addEventListener('click', function () {
       const row = this.closest('tr');
@@ -184,6 +192,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (row.hasAttribute('data-stationery-id')) {
         type = 'stationery';
         itemId = row.getAttribute('data-stationery-id');
+      } else if (row.hasAttribute('data-barItem-id')) {
+        type = 'barItem';
+        itemId = row.getAttribute('data-barItem-id');
       }
       if (!itemId) return;
       const selector = `.receipt-item[data-item-id="${itemId}"][data-item-type="${type}"]`;
@@ -235,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // Attiva l'overlay (lo stile CSS #overlay.active deve gestire display o opacity)
     overlayDiv.classList.add('active');
-  
+
     // Crea l'alert
     const alertDiv = document.createElement('div');
     alertDiv.classList.add(
@@ -252,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <button type="button" id="dismiss-alert" class="btn-close btn-close-white"></button>
       `;
     document.body.appendChild(alertDiv);
-  
+
     // Chiusura manuale tramite click sul pulsante
     alertDiv.querySelector('#dismiss-alert').addEventListener('click', () => {
       alertDiv.classList.add('fade-out');
@@ -260,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
       overlayDiv.remove();
       alertDiv.remove();
     });
-  
+
     // Dopo 3 secondi, avvia il fade-out
     setTimeout(() => {
       alertDiv.classList.add('fade-out');
@@ -270,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
         alertDiv.remove();
       }, 500);
     }, 1000);
-  }  
+  }
 
   function openReceipt() {
     receipt.classList.add('show-receipt');
