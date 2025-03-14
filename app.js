@@ -68,14 +68,14 @@ sequelize
   });
 
 // Avvio script bot.js (se presente)
-// const { spawn } = require('child_process');
-// const botProcess = spawn('node', ['bot.js']);
-// botProcess.stdout.on('data', data => {
-//   console.log(`Output di bot.js: ${data}`);
-// });
-// botProcess.stderr.on('data', data => {
-//   console.error(`Errore di stderr: ${data}`);
-// });
-// botProcess.on('close', code => {
-//   console.log(`bot.js process exited with code ${code}`);
-// });
+const { spawn } = require('child_process');
+const botProcess = spawn('node', ['bot.js']);
+botProcess.stdout.on('data', data => {
+  console.log(`Output di bot.js: ${data}`);
+});
+botProcess.stderr.on('data', data => {
+  console.error(`Errore di stderr: ${data}`);
+});
+botProcess.on('close', code => {
+  console.log(`bot.js process exited with code ${code}`);
+});
