@@ -3,6 +3,7 @@ const Book = require('../models/bookModel');
 const Backpack = require('../models/backpackModel');
 const Suit = require('../models/suitModel');
 const Stationery = require('../models/stationeryModel');
+const BarItem = require('../models/barItemModel');
 
 exports.createReceipt = async (req, res) => {
   try {
@@ -28,6 +29,9 @@ exports.createReceipt = async (req, res) => {
         currentPrice = parseFloat(product.selling_price);
       } else if (item.type === 'stationery') {
         product = await Stationery.findByPk(item.itemId);
+        currentPrice = parseFloat(product.selling_price);
+      } else if (item.type === 'barItem') {
+        product = await BarItem.findByPk(item.itemId);
         currentPrice = parseFloat(product.selling_price);
       }
 
