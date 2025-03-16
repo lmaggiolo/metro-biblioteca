@@ -79,6 +79,8 @@ document.addEventListener('DOMContentLoaded', function () {
       endpoint = `/cancelleria/${itemId}`;
     } else if (type === 'barItem') {
       endpoint = `/bar/${itemId}`;
+    } else if (type === 'publication') {
+      endpoint = `/pubblicazioni/${itemId}`;
     }
     return fetch(endpoint).then(response => response.json());
   }
@@ -105,6 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         iconClass = 'fas fa-coffee fs-5';
       }
+    } else if (data.type === 'publication') {
+      iconClass = 'fas fa-book-open fs-5';
     }
     li.innerHTML = `
       <div class="d-flex align-items-center">
@@ -115,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
       </div>
       <div class="d-flex align-items-end">
-        <input type="number" class="quantity form-control form-control-sm mt-0" value="${quantity}" min="1">
+        <input type="number" class="quantity form-control form-control-sm mt-0" value="${quantity}" min="0">
         <button class="remove-item btn btn-link ms-2">
           <i class="fas fa-trash-can fs-5"></i>
         </button>
@@ -195,6 +199,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } else if (row.hasAttribute('data-barItem-id')) {
         type = 'barItem';
         itemId = row.getAttribute('data-barItem-id');
+      } else if (row.hasAttribute('data-publication-id')) {
+        type = 'publication';
+        itemId = row.getAttribute('data-publication-id');
       }
       if (!itemId) return;
       const selector = `.receipt-item[data-item-id="${itemId}"][data-item-type="${type}"]`;

@@ -13,6 +13,7 @@ const backpackRoutes = require('./routes/backpackRoute');
 const suitRoutes = require('./routes/suitRoute');
 const stationeryRoutes = require('./routes/stationeryRoute');
 const barRoutes = require('./routes/barRoute');
+const publicationRoutes = require('./routes/publicationRoute');
 const receiptRoutes = require('./routes/receiptRoute');
 
 const pkg = require('./package.json');
@@ -52,6 +53,7 @@ app.use('/zaini', backpackRoutes);
 app.use('/abiti', suitRoutes);
 app.use('/cancelleria', stationeryRoutes);
 app.use('/bar', barRoutes);
+app.use('/pubblicazioni', publicationRoutes);
 app.use('/scontrini', receiptRoutes);
 
 sequelize

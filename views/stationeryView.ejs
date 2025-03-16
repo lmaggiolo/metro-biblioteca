@@ -222,11 +222,11 @@
                       </div>
                       <div class="mb-3">
                         <label for="sellingPrice<%= item.id %>" class="form-label">Prezzo Vendita</label>
-                        <input type="number" class="form-control bg-dark text-white" id="sellingPrice<%= item.id %>" name="selling_price" value="<%= item.selling_price %>" min="1" required>
+                        <input type="number" class="form-control bg-dark text-white" id="sellingPrice<%= item.id %>" name="selling_price" value="<%= item.selling_price %>" min="0" required>
                       </div>
                       <div class="mb-3">
                         <label for="purchasePrice<%= item.id %>" class="form-label">Prezzo Acquisto</label>
-                        <input type="number" class="form-control bg-dark text-white" id="purchasePrice<%= item.id %>" name="purchase_price" value="<%= item.purchase_price %>" min="1" required>
+                        <input type="number" class="form-control bg-dark text-white" id="purchasePrice<%= item.id %>" name="purchase_price" value="<%= item.purchase_price %>" min="0" required>
                       </div>
                       <div class="mb-3 d-flex align-items-center">
                         <label class="form-check-label me-3" for="onSale<%= item.id %>">In Vendita</label>
@@ -304,11 +304,11 @@
                   </div>
                   <div class="mb-3">
                     <label for="selling_price" class="form-label">Prezzo Vendita</label>
-                    <input type="number" class="form-control bg-dark text-white" id="selling_price" name="selling_price" min="1" required>
+                    <input type="number" class="form-control bg-dark text-white" id="selling_price" name="selling_price" min="0" required>
                   </div>
                   <div class="mb-3">
                     <label for="purchase_price" class="form-label">Prezzo Acquisto</label>
-                    <input type="number" class="form-control bg-dark text-white" id="purchase_price" name="purchase_price" min="1" required>
+                    <input type="number" class="form-control bg-dark text-white" id="purchase_price" name="purchase_price" min="0" required>
                   </div>
                   <div class="mb-3 d-flex align-items-center">
                     <label class="form-check-label me-3" for="onSale">In Vendita</label>
@@ -336,7 +336,7 @@
             <div class="col-12 col-md-8">
               <nav aria-label="Page navigation">
                 <ul class="pagination flex-wrap mb-0">
-                  <% 
+                  <%
                     const maxPageButtons = 7;
                     const pageOffset = Math.floor(maxPageButtons / 2);
                     let startPage = Math.max(currentPage - pageOffset, 1);
@@ -348,7 +348,7 @@
                         startPage = Math.max(endPage - maxPageButtons + 1, 1);
                       }
                     }
-                    if (currentPage > 1) { 
+                    if (currentPage > 1) {
                   %>
                     <li class="page-item">
                       <a class="page-link" href="/cancelleria?page=<%= currentPage - 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Previous page">
@@ -406,13 +406,13 @@
 
     <!-- Bootstrap JS -->
     <script src="/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Script Personalizzati -->
     <script src="/js/modal.js"></script>
     <script src="/js/receipt.js"></script>
     <script src="/js/tooltip.js"></script>
     <script src="/js/clearField.js"></script>
-    
+
     <!-- Script per riaprire la modale in caso di errori -->
     <script>
       <% if (messages && messages.error && messages.error.length > 0 && messages.modal) { %>

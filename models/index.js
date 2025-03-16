@@ -7,6 +7,7 @@ const Backpack = require('./backpackModel');
 const Suit = require('./suitModel');
 const Stationery = require('./stationeryModel');
 const BarItem = require('./barItemModel');
+const Publication = require('./publicationModel');
 
 // Associazioni tra User e Role
 User.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
@@ -58,6 +59,13 @@ BarItem.belongsTo(User, { foreignKey: 'insertedBy', as: 'inserter' });
 User.hasMany(BarItem, { foreignKey: 'updatedBy', as: 'updatedBarItems' });
 BarItem.belongsTo(User, { foreignKey: 'updatedBy', as: 'updater' });
 
+// Associazioni tra User e Publication
+User.hasMany(Publication, { foreignKey: 'insertedBy', as: 'insertedPublications' });
+Publication.belongsTo(User, { foreignKey: 'insertedBy', as: 'inserter' });
+
+User.hasMany(Publication, { foreignKey: 'updatedBy', as: 'updatedPublications' });
+Publication.belongsTo(User, { foreignKey: 'updatedBy', as: 'updater' });
+
 module.exports = {
   sequelize,
   User,
@@ -68,4 +76,5 @@ module.exports = {
   Suit,
   Stationery,
   BarItem,
+  Publication,
 };

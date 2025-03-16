@@ -4,6 +4,7 @@ const Backpack = require('../models/backpackModel');
 const Suit = require('../models/suitModel');
 const Stationery = require('../models/stationeryModel');
 const BarItem = require('../models/barItemModel');
+const Publication = require('../models/publicationModel');
 
 exports.createReceipt = async (req, res) => {
   try {
@@ -18,6 +19,8 @@ exports.createReceipt = async (req, res) => {
     // Per ciascun item, recupera il prodotto dalla tabella corrispondente e calcola il totale
     for (const item of items) {
       let product;
+      let currentPrice;
+
       if (item.type === 'book') {
         product = await Book.findByPk(item.itemId);
         currentPrice = parseFloat(product.price);
@@ -32,6 +35,9 @@ exports.createReceipt = async (req, res) => {
         currentPrice = parseFloat(product.selling_price);
       } else if (item.type === 'barItem') {
         product = await BarItem.findByPk(item.itemId);
+        currentPrice = parseFloat(product.selling_price);
+      } else if (item.type === 'publication') {
+        product = await Publication.findByPk(item.itemId);
         currentPrice = parseFloat(product.selling_price);
       }
 
