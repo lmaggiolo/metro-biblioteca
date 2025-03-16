@@ -148,8 +148,8 @@
                         </th>
                         <th>Azioni</th>
                     </tr>
-                </thead>                  
-                
+                </thead>
+
                 <tbody>
                     <% backpacks.forEach(backpack => { %>
                         <tr data-backpack-id="<%= backpack.id %>">
@@ -326,7 +326,7 @@
                             id="sellingPrice<%= backpack.id %>"
                             name="selling_price"
                             value="<%= backpack.selling_price %>"
-                            min="1"
+                            min="0"
                             required
                         >
                         </div>
@@ -343,7 +343,7 @@
                             id="purchasePrice<%= backpack.id %>"
                             name="purchase_price"
                             value="<%= backpack.purchase_price %>"
-                            min="1"
+                            min="0"
                             required
                         >
                         </div>
@@ -434,7 +434,7 @@
                             ></button>
                             </div>
                         <% } %>
-                        Sei sicuro di voler eliminare lo zaino 
+                        Sei sicuro di voler eliminare lo zaino
                         <strong><%= backpack.name %></strong>?
                         </div>
                         <div class="modal-footer">
@@ -460,8 +460,8 @@
                     </div>
                     </div>
                 </div>
-            <% } %>     
-        <% }) %>     
+            <% } %>
+        <% }) %>
 
         <!-- Aggiunta nuovo zaino (modale) -->
         <div
@@ -556,7 +556,7 @@
                             class="form-control bg-dark text-white"
                             id="selling_price"
                             name="selling_price"
-                            min="1"
+                            min="0"
                             required
                             >
                         </div>
@@ -574,7 +574,7 @@
                             class="form-control bg-dark text-white"
                             id="purchase_price"
                             name="purchase_price"
-                            min="1"
+                            min="0"
                             required
                             >
                         </div>
@@ -651,7 +651,7 @@
             <div class="col-12 col-md-8">
               <nav aria-label="Page navigation">
                 <ul class="pagination flex-wrap mb-0">
-                  <% 
+                  <%
                     const maxPageButtons = 7; // Numero massimo di pulsanti di pagina da mostrare
                     const pageOffset = Math.floor(maxPageButtons / 2);
                     let startPage = Math.max(currentPage - pageOffset, 1);
@@ -776,7 +776,7 @@
             </div>
           </div>
         </form>
-        
+
       </div>
     </div>
   </div>
