@@ -65,147 +65,154 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Rendi updateCheckoutButtonState globale
   window.updateCheckoutButtonState = updateCheckoutButtonState;
-
-  // Funzione per recuperare i dati dal backend tramite chiamata REST in base a itemId e type.
-  function fetchItemData(itemId, type) {
-    let endpoint;
-    if (type === 'book') {
-      endpoint = `/libri/${itemId}`;
-    } else if (type === 'backpack') {
-      endpoint = `/zaini/${itemId}`;
-    } else if (type === 'suit') {
-      endpoint = `/abiti/${itemId}`;
-    } else if (type === 'stationery') {
-      endpoint = `/cancelleria/${itemId}`;
-    } else if (type === 'barItem') {
-      endpoint = `/bar/${itemId}`;
-    } else if (type === 'publication') {
-      endpoint = `/pubblicazioni/${itemId}`;
-    }
-    return fetch(endpoint).then(response => response.json());
-  }
-
-  // Crea l'elemento dello scontrino usando i dati restituiti dal backend.
-  function createReceiptElement(data, quantity = 1) {
-    const li = document.createElement('li');
-    li.className = 'list-group-item receipt-item';
-    li.setAttribute('data-item-id', data.id);
-    li.setAttribute('data-item-type', data.type);
-    li.setAttribute('data-item-price', data.price);
-    let iconClass = 'fas fa-box fs-5';
-    if (data.type === 'book') {
-      iconClass = 'fas fa-book fs-5';
-    } else if (data.type === 'backpack') {
-      iconClass = 'bi bi-backpack3-fill fs-5';
-    } else if (data.type === 'suit') {
-      iconClass = 'fas fa-tshirt fs-5';
-    } else if (data.type === 'stationery') {
-      iconClass = 'fas fa-paperclip fs-5';
-    } else if (data.type === 'barItem') {
-      if (data.type_item === 'Cibo') {
-        iconClass = 'fas fa-burger fs-5';
-      } else {
-        iconClass = 'fas fa-coffee fs-5';
+    // Funzione per recuperare i dati dal backend tramite chiamata REST in base a itemId e type.
+    function fetchItemData(itemId, type) {
+      let endpoint;
+      if (type === 'book') {
+        endpoint = `/libri/${itemId}`;
+      } else if (type === 'backpack') {
+        endpoint = `/zaini/${itemId}`;
+      } else if (type === 'suit') {
+        endpoint = `/abiti/${itemId}`;
+      } else if (type === 'stationery') {
+        endpoint = `/cancelleria/${itemId}`;
+      } else if (type === 'barItem') {
+        endpoint = `/bar/${itemId}`;
+      } else if (type === 'publication') {
+        endpoint = `/pubblicazioni/${itemId}`;
+      } else if (type === 'promotion') {
+        endpoint = `/promozioni/${itemId}`;
       }
-    } else if (data.type === 'publication') {
-      iconClass = 'fas fa-book-open fs-5';
+      return fetch(endpoint).then(response => response.json());
     }
-    li.innerHTML = `
-      <div class="d-flex align-items-center">
-        <i class="${iconClass}"></i>
-        <div class="item-details ms-3">
-          <span class="item-name">${data.name}</span><br>
-          <small>${parseFloat(data.price).toFixed(2)} €</small>
-        </div>
-      </div>
-      <div class="d-flex align-items-end">
-        <input type="number" class="quantity form-control form-control-sm mt-0" value="${quantity}" min="0">
-        <button class="remove-item btn btn-link ms-2">
-          <i class="fas fa-trash-can fs-5"></i>
-        </button>
-      </div>`;
-    li.querySelector('.quantity').addEventListener('input', function () {
-      if (this.value < 1) this.value = 1;
-      updateTotalPrice();
-      // Aggiorna la quantità in sessione per questo item
-      addItemToSessionStorage({
-        itemId: data.id,
-        type: data.type,
-        quantity: parseInt(this.value)
-      });
-      updateCheckoutButtonState();
-    });
-    li.querySelector('.remove-item').addEventListener('click', function () {
-      li.remove();
-      updateTotalPrice();
-      removeItemFromSessionStorage(data.id, data.type);
-      updateCheckoutButtonState();
-    });
-    return li;
-  }
 
-  // Carica gli item salvati in sessione effettuando le chiamate al backend e ricostruendo il DOM.
-  function loadReceiptFromSessionStorage() {
-    const storedItems = getStoredItems();
-    // Per ogni item creiamo una promise che restituisce anche il valore quantity e addedAt
-    const fetchPromises = storedItems.map(item =>
-      fetchItemData(item.itemId, item.type)
-        .then(data => ({
-          data,
-          quantity: item.quantity,
-          addedAt: item.addedAt
-        }))
-    );
+    // Crea l'elemento dello scontrino usando i dati restituiti dal backend.
+    function createReceiptElement(data, quantity = 1) {
+      const li = document.createElement('li');
+      li.className = 'list-group-item receipt-item';
+      li.setAttribute('data-item-id', data.id);
+      li.setAttribute('data-item-type', data.type);
+      li.setAttribute('data-item-price', data.price);
+      let iconClass = 'fas fa-box fs-5';
 
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Ordina i risultati in base a addedAt (che abbiamo memorizzato in millisecondi)
-        results.sort((a, b) => a.addedAt - b.addedAt);
-        results.forEach(result => {
-          // Evitiamo duplicati nel DOM
-          if (!receiptItems.querySelector(`.receipt-item[data-item-id="${result.data.id}"][data-item-type="${result.data.type}"]`)) {
-            const li = createReceiptElement(result.data, result.quantity);
-            receiptItems.appendChild(li);
-          }
-        });
-        updateTotalPrice();
-        if (receiptItems.childElementCount > 0 && window.innerWidth >= 1300 && !receipt.classList.contains('show-receipt')) {
-          openReceipt();
+      if (data.type === 'book') {
+        iconClass = 'fas fa-book fs-5';
+      } else if (data.type === 'backpack') {
+        iconClass = 'bi bi-backpack3-fill fs-5';
+      } else if (data.type === 'suit') {
+        iconClass = 'fas fa-tshirt fs-5';
+      } else if (data.type === 'stationery') {
+        iconClass = 'fas fa-paperclip fs-5';
+      } else if (data.type === 'barItem') {
+        if (data.itemType === 'Cibo') {
+          iconClass = 'fas fa-utensils fs-5';
+        } else {
+          iconClass = 'fas fa-coffee fs-5';
         }
-        updateCheckoutButtonState();
-      })
-      .catch(err => console.error(err));
-  }
-
-  loadReceiptFromSessionStorage();
-
-  // Gestione evento "Aggiungi allo scontrino" per tutti i tipi
-  document.querySelectorAll('.add-to-receipt').forEach(button => {
-    button.addEventListener('click', function () {
-      const row = this.closest('tr');
-      let type, itemId;
-      if (row.hasAttribute('data-book-id')) {
-        type = 'book';
-        itemId = row.getAttribute('data-book-id');
-      } else if (row.hasAttribute('data-backpack-id')) {
-        type = 'backpack';
-        itemId = row.getAttribute('data-backpack-id');
-      } else if (row.hasAttribute('data-suit-id')) {
-        type = 'suit';
-        itemId = row.getAttribute('data-suit-id');
-      } else if (row.hasAttribute('data-stationery-id')) {
-        type = 'stationery';
-        itemId = row.getAttribute('data-stationery-id');
-      } else if (row.hasAttribute('data-barItem-id')) {
-        type = 'barItem';
-        itemId = row.getAttribute('data-barItem-id');
-      } else if (row.hasAttribute('data-publication-id')) {
-        type = 'publication';
-        itemId = row.getAttribute('data-publication-id');
+      } else if (data.type === 'publication') {
+        iconClass = 'fas fa-book-open fs-5';
+      } else if (data.type === 'promotion') {
+        iconClass = 'fas fa-tags fs-5';
       }
-      if (!itemId) return;
-      const selector = `.receipt-item[data-item-id="${itemId}"][data-item-type="${type}"]`;
-      const existing = receiptItems.querySelector(selector);
+      li.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="${iconClass}"></i>
+          <div class="item-details ms-3">
+            <span class="item-name">${data.name}</span><br>
+            <small>${parseFloat(data.price).toFixed(2)} €</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-end">
+          <input type="number" class="quantity form-control form-control-sm mt-0" value="${quantity}" min="0">
+          <button class="remove-item btn btn-link ms-2">
+            <i class="fas fa-trash-can fs-5"></i>
+          </button>
+        </div>`;
+      li.querySelector('.quantity').addEventListener('input', function () {
+        if (this.value < 1) this.value = 1;
+        updateTotalPrice();
+        // Aggiorna la quantità in sessione per questo item
+        addItemToSessionStorage({
+          itemId: data.id,
+          type: data.type,
+          quantity: parseInt(this.value)
+        });
+        updateCheckoutButtonState();
+      });
+      li.querySelector('.remove-item').addEventListener('click', function () {
+        li.remove();
+        updateTotalPrice();
+        removeItemFromSessionStorage(data.id, data.type);
+        updateCheckoutButtonState();
+      });
+      return li;
+    }
+
+    // Carica gli item salvati in sessione effettuando le chiamate al backend e ricostruendo il DOM.
+    function loadReceiptFromSessionStorage() {
+      const storedItems = getStoredItems();
+      // Per ogni item creiamo una promise che restituisce anche il valore quantity e addedAt
+      const fetchPromises = storedItems.map(item =>
+        fetchItemData(item.itemId, item.type)
+          .then(data => ({
+            data,
+            quantity: item.quantity,
+            addedAt: item.addedAt
+          }))
+      );
+
+      Promise.all(fetchPromises)
+        .then(results => {
+          // Ordina i risultati in base a addedAt (che abbiamo memorizzato in millisecondi)
+          results.sort((a, b) => a.addedAt - b.addedAt);
+          results.forEach(result => {
+            // Evitiamo duplicati nel DOM
+            if (!receiptItems.querySelector(`.receipt-item[data-item-id="${result.data.id}"][data-item-type="${result.data.type}"]`)) {
+              const li = createReceiptElement(result.data, result.quantity);
+              receiptItems.appendChild(li);
+            }
+          });
+          updateTotalPrice();
+          if (receiptItems.childElementCount > 0 && window.innerWidth >= 1300 && !receipt.classList.contains('show-receipt')) {
+            openReceipt();
+          }
+          updateCheckoutButtonState();
+        })
+        .catch(err => console.error(err));
+    }
+
+    loadReceiptFromSessionStorage();
+
+    // Gestione evento "Aggiungi allo scontrino" per tutti i tipi
+    document.querySelectorAll('.add-to-receipt').forEach(button => {
+      button.addEventListener('click', function () {
+        const row = this.closest('tr');
+        let type, itemId;
+        if (row.hasAttribute('data-book-id')) {
+          type = 'book';
+          itemId = row.getAttribute('data-book-id');
+        } else if (row.hasAttribute('data-backpack-id')) {
+          type = 'backpack';
+          itemId = row.getAttribute('data-backpack-id');
+        } else if (row.hasAttribute('data-suit-id')) {
+          type = 'suit';
+          itemId = row.getAttribute('data-suit-id');
+        } else if (row.hasAttribute('data-stationery-id')) {
+          type = 'stationery';
+          itemId = row.getAttribute('data-stationery-id');
+        } else if (row.hasAttribute('data-barItem-id')) {
+          type = 'barItem';
+          itemId = row.getAttribute('data-barItem-id');
+        } else if (row.hasAttribute('data-publication-id')) {
+          type = 'publication';
+          itemId = row.getAttribute('data-publication-id');
+        } else if (row.hasAttribute('data-promotion-id')) {
+          type = 'promotion';
+          itemId = row.getAttribute('data-promotion-id');
+        }
+        if (!itemId) return;
+        const selector = `.receipt-item[data-item-id="${itemId}"][data-item-type="${type}"]`;
+        const existing = receiptItems.querySelector(selector);
       if (existing) {
         const itemName = existing.querySelector('.item-name').textContent;
         const qtyInput = existing.querySelector('.quantity');

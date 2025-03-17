@@ -5,6 +5,7 @@ const Suit = require('../models/suitModel');
 const Stationery = require('../models/stationeryModel');
 const BarItem = require('../models/barItemModel');
 const Publication = require('../models/publicationModel');
+const Promotion = require('../models/promotionModel');
 
 exports.createReceipt = async (req, res) => {
   try {
@@ -39,6 +40,9 @@ exports.createReceipt = async (req, res) => {
       } else if (item.type === 'publication') {
         product = await Publication.findByPk(item.itemId);
         currentPrice = parseFloat(product.selling_price);
+      } else if (item.type === 'promotion') {
+        product = await Promotion.findByPk(item.itemId);
+        currentPrice = parseFloat(product.selling_price);
       }
 
       if (!product) {
@@ -53,7 +57,6 @@ exports.createReceipt = async (req, res) => {
         quantity: item.quantity,
       });
     }
-
     // Utilizza req.user (disponibile tramite Passport) per registrare l'utente che effettua il checkout
     const insertedBy = req.user ? req.user.id : null;
     if (!insertedBy) {
