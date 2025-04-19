@@ -25,8 +25,8 @@ const Suit = sequelize.define('Suit', {
       notNull: { msg: 'Il campo "Prezzo di vendita" è obbligatorio.' },
       isInt: { msg: 'Il campo "Prezzo di vendita" deve essere un numero intero.' },
       min: {
-        args: [1],
-        msg: 'Il prezzo di vendita deve essere almeno 1.',
+        args: [0],
+        msg: 'Il prezzo di vendita deve essere almeno 0.',
       },
     },
   },
@@ -38,8 +38,8 @@ const Suit = sequelize.define('Suit', {
       notNull: { msg: 'Il campo "Prezzo di acquisto" è obbligatorio.' },
       isInt: { msg: 'Il campo "Prezzo di acquisto" deve essere un numero intero.' },
       min: {
-        args: [1],
-        msg: 'Il prezzo di acquisto deve essere almeno 1.',
+        args: [0],
+        msg: 'Il prezzo di acquisto deve essere almeno 0.',
       },
     },
   },

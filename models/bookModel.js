@@ -44,8 +44,8 @@ const Book = sequelize.define('Book', {
       notNull: { msg: 'Il campo "Pagine" è obbligatorio.' },
       isInt: { msg: 'Il campo "Pagine" deve essere un numero intero.' },
       min: {
-        args: [1],
-        msg: 'Il numero di pagine deve essere almeno 1.',
+        args: [0],
+        msg: 'Il numero di pagine deve essere almeno 0.',
       },
     },
   },
@@ -56,8 +56,8 @@ const Book = sequelize.define('Book', {
       notNull: { msg: 'Il campo "Prezzo" è obbligatorio.' },
       isInt: { msg: 'Il campo "Prezzo" deve essere un numero intero.' },
       min: {
-        args: [1],
-        msg: 'Il prezzo deve essere almeno 1.',
+        args: [0],
+        msg: 'Il prezzo deve essere almeno 0.',
       },
     },
   },

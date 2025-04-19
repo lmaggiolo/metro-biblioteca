@@ -1,14 +1,14 @@
-// Modello per la cancelleria, con campi id, name, selling_price, purchase_price, onSale, insertedBy, updatedBy, updatedAt
+// Modello per le promozioni, con campi id, name, selling_price, purchase_price, onSale, insertedBy, updatedBy, updatedAt
 const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/db-config');
 
-const Stationery = sequelize.define('Stationery', {
+const Promotion = sequelize.define('Promotion', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  // Campo nome
+  // Campo nome della promozione
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -43,7 +43,7 @@ const Stationery = sequelize.define('Stationery', {
       },
     },
   },
-  // Campo onSale, per esempio per indicare se l’oggetto è in vendita
+  // Campo onSale, di tipo boolean
   onSale: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
@@ -78,18 +78,18 @@ const Stationery = sequelize.define('Stationery', {
     defaultValue: null,
   },
 }, {
-  tableName: 'Stationeries',
+  tableName: 'Promotions',
   timestamps: true,
   hooks: {
     // Rimuove eventuali spazi dal nome prima della validazione
-    beforeValidate: (stationery) => {
-      if (stationery.name) {
-        stationery.name = stationery.name.trim();
+    beforeValidate: (promotion) => {
+      if (promotion.name) {
+        promotion.name = promotion.name.trim();
       }
     },
     // Forza updatedAt a null prima di un update per consentire il suo refresh
-    beforeUpdate: (stationery) => {
-      stationery.updatedAt = null;
+    beforeUpdate: (promotion) => {
+      promotion.updatedAt = null;
     },
   },
   // Validazione personalizzata per il campo name per garantire l'unicità
@@ -99,12 +99,12 @@ const Stationery = sequelize.define('Stationery', {
       if (this.id) {
         condition.id = { [Op.ne]: this.id };
       }
-      const existing = await Stationery.findOne({ where: condition });
+      const existing = await Promotion.findOne({ where: condition });
       if (existing) {
-        throw new Error('Esiste già un oggetto della cancelleria con questo nome.');
+        throw new Error('Esiste già una promozione con questo nome.');
       }
     },
   },
 });
 
-module.exports = Stationery;
+module.exports = Promotion;

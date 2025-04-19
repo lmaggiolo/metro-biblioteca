@@ -13,7 +13,7 @@
     <link href="/css/fontawesome.min.css" rel="stylesheet">
     <!-- Custom Styles -->
     <link href="/css/styles.css" rel="stylesheet">
-    <title><%= projectName %> - Abiti</title>
+    <title><%= projectName %> - Promozioni</title>
   </head>
   <body>
     <!-- Navbar -->
@@ -35,32 +35,32 @@
           </div>
         <% } %>
 
-        <!-- Titolo e bottone per aggiungere abito -->
+        <!-- Titolo e bottone per aggiungere promozione -->
         <div class="d-flex justify-content-between align-items-center mb-1">
           <h1>
-            <i class="fas fa-tshirt"></i> Lista degli Abiti
+            <i class="fas fa-tags"></i> Lista delle Promozioni
           </h1>
           <% if (isPrivileged || currentUserPriority <= 4) { %>
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
-              <i class="fas fa-plus"></i> Aggiungi Abito
+              <i class="fas fa-plus"></i> Aggiungi Promozione
             </button>
           <% } %>
         </div>
 
-        <!-- Counter abiti trovati -->
+        <!-- Counter promozioni trovate -->
         <p class="mb-1">
-          Numero di abiti trovati: <strong><%= count %></strong>
+          Numero di promozioni trovate: <strong><%= count %></strong>
         </p>
 
         <!-- Form di ricerca -->
-        <form method="get" action="/abiti" class="mb-1">
+        <form method="get" action="/promozioni" class="mb-1">
           <div class="row g-2 align-items-center">
             <div class="col-md-4">
               <div class="input-group">
                 <span class="input-group-text icon-background search-icon text-white">
-                  <i class="bi bi-shop-window"></i>
+                  <i class="fas fa-search"></i>
                 </span>
-                <input type="text" id="searchName" name="searchName" class="form-control" placeholder="Cerca Nome Abito" value="<%= searchName %>" />
+                <input type="text" id="searchName" name="searchName" class="form-control" placeholder="Cerca Nome Promozione" value="<%= searchName %>" />
                 <button type="button" class="btn btn-outline-secondary clear-input" data-input-id="searchName">
                   <i class="fas fa-times"></i>
                 </button>
@@ -71,7 +71,7 @@
                 <button class="btn btn-outline-success" type="submit">
                   <i class="fas fa-search"></i> Cerca
                 </button>
-                <a href="/abiti" class="btn btn-outline-secondary">
+                <a href="/promozioni" class="btn btn-outline-secondary">
                   <i class="fas fa-times"></i> Annulla
                 </a>
               </div>
@@ -80,56 +80,56 @@
         </form>
         <!-- Fine form di ricerca -->
 
-        <!-- Tabella abiti -->
+        <!-- Tabella promozioni -->
         <div class="table-responsive">
           <table class="table table-dark table-striped">
             <thead>
               <tr>
-                <!-- Ordina per nome abito -->
+                <!-- Ordina per nome promozione -->
                 <th>
-                  <a href="/abiti?sortField=name&sortOrder=<%= sortField === 'name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=name&sortOrder=<%= sortField === 'name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Nome
                     <i class="fas fa-sort-<%= sortField === 'name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
                 </th>
                 <!-- Ordina per prezzo di vendita -->
                 <th class="d-none d-md-table-cell">
-                  <a href="/abiti?sortField=selling_price&sortOrder=<%= sortField === 'selling_price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=selling_price&sortOrder=<%= sortField === 'selling_price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Prezzo Vendita
                     <i class="fas fa-sort-<%= sortField === 'selling_price' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
                 </th>
                 <!-- Ordina per prezzo di acquisto -->
                 <th class="d-none d-md-table-cell">
-                  <a href="/abiti?sortField=purchase_price&sortOrder=<%= sortField === 'purchase_price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=purchase_price&sortOrder=<%= sortField === 'purchase_price' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Prezzo Acquisto
                     <i class="fas fa-sort-<%= sortField === 'purchase_price' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
                 </th>
                 <!-- Ordina per inserter.name -->
                 <th class="d-none d-lg-table-cell">
-                  <a href="/abiti?sortField=inserter.name&sortOrder=<%= sortField === 'inserter.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=inserter.name&sortOrder=<%= sortField === 'inserter.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Inserito Da
                     <i class="fas fa-sort-<%= sortField === 'inserter.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
                 </th>
                 <!-- Ordina per createdAt -->
                 <th class="d-none d-lg-table-cell">
-                  <a href="/abiti?sortField=createdAt&sortOrder=<%= sortField === 'createdAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=createdAt&sortOrder=<%= sortField === 'createdAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Data Inserimento
                     <i class="fas fa-sort-<%= sortField === 'createdAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
                 </th>
                 <!-- Ordina per updater.name -->
                 <th class="d-none d-lg-table-cell">
-                  <a href="/abiti?sortField=updater.name&sortOrder=<%= sortField === 'updater.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=updater.name&sortOrder=<%= sortField === 'updater.name' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Modificato Da
                     <i class="fas fa-sort-<%= sortField === 'updater.name' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
                 </th>
                 <!-- Ordina per updatedAt -->
                 <th class="d-none d-lg-table-cell">
-                  <a href="/abiti?sortField=updatedAt&sortOrder=<%= sortField === 'updatedAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
+                  <a href="/promozioni?sortField=updatedAt&sortOrder=<%= sortField === 'updatedAt' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>&searchName=<%= encodeURIComponent(searchName || '') %>&limit=<%= limit %>" class="text-decoration-none text-white">
                     Data Modifica
                     <i class="fas fa-sort-<%= sortField === 'updatedAt' ? (sortOrder === 'ASC' ? 'up' : 'down') : 'down' %>"></i>
                   </a>
@@ -138,48 +138,48 @@
               </tr>
             </thead>
             <tbody>
-              <% suits.forEach(suit => { %>
-                <tr data-suit-id="<%= suit.id %>">
+              <% promotions.forEach(promotion => { %>
+                <tr data-promotion-id="<%= promotion.id %>">
                   <td>
-                    <span class="<%= suit.onSale ? 'on-sale' : 'not-on-sale' %>">
-                      <%= suit.name %>
+                    <span class="<%= promotion.onSale ? 'on-sale' : 'not-on-sale' %>">
+                      <%= promotion.name %>
                     </span>
                   </td>
                   <td class="d-none d-md-table-cell">
-                    <%= suit.selling_price %> €
+                    <%= promotion.selling_price %> €
                   </td>
                   <td class="d-none d-md-table-cell">
-                    <%= suit.purchase_price %> €
+                    <%= promotion.purchase_price %> €
                   </td>
                   <td class="d-none d-lg-table-cell">
-                    <%= (suit.inserter && suit.inserter.name) ? suit.inserter.name : '-' %>
+                    <%= (promotion.inserter && promotion.inserter.name) ? promotion.inserter.name : '-' %>
                   </td>
                   <td class="d-none d-lg-table-cell">
-                    <%= suit.createdAt ? suit.createdAt.toLocaleDateString() : '-' %>
+                    <%= promotion.createdAt ? promotion.createdAt.toLocaleDateString() : '-' %>
                   </td>
                   <td class="d-none d-lg-table-cell">
-                    <%= (suit.updater && suit.updater.name) ? suit.updater.name : '-' %>
+                    <%= (promotion.updater && promotion.updater.name) ? promotion.updater.name : '-' %>
                   </td>
                   <td class="d-none d-lg-table-cell">
-                    <%= suit.updatedAt ? suit.updatedAt.toLocaleDateString() : '-' %>
+                    <%= promotion.updatedAt ? promotion.updatedAt.toLocaleDateString() : '-' %>
                   </td>
                   <td>
                     <div class="d-flex flex-column flex-sm-row align-items-start">
-                      <% if (suit.onSale) { %>
+                      <% if (promotion.onSale) { %>
                         <!-- Pulsante Aggiungi allo Scontrino -->
-                        <button class="btn btn-secondary btn-sm m-1 add-to-receipt has-tooltip" aria-label="Aggiungi allo Scontrino" data-bs-toggle="tooltip" title="Aggiungi questo abito allo scontrino">
+                        <button class="btn btn-secondary btn-sm m-1 add-to-receipt has-tooltip" aria-label="Aggiungi allo Scontrino" data-bs-toggle="tooltip" title="Aggiungi questa promozione allo scontrino">
                           <i class="fas fa-cart-plus fs-5"></i>
                         </button>
                       <% } %>
                       <% if (isPrivileged || currentUserPriority <= 4) { %>
                         <!-- Pulsante Modifica -->
-                        <button class="btn btn-primary btn-sm m-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#editModal<%= suit.id %>" aria-label="Modifica" title="Modifica questo abito">
+                        <button class="btn btn-primary btn-sm m-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#editModal<%= promotion.id %>" aria-label="Modifica" title="Modifica questa promozione">
                           <i class="fas fa-pencil fs-5"></i>
                         </button>
                       <% } %>
                       <% if (isPrivileged || currentUserPriority <= 3) { %>
                         <!-- Pulsante Elimina -->
-                        <button class="btn btn-danger btn-sm m-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#deleteModal<%= suit.id %>" aria-label="Elimina" title="Elimina questo abito">
+                        <button class="btn btn-danger btn-sm m-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#deleteModal<%= promotion.id %>" aria-label="Elimina" title="Elimina questa promozione">
                           <i class="fas fa-trash-can fs-5"></i>
                         </button>
                       <% } %>
@@ -190,25 +190,25 @@
             </tbody>
           </table>
         </div>
-        <!-- Fine tabella abiti -->
+        <!-- Fine tabella promozioni -->
 
-        <!-- Modals per ciascun abito -->
-        <% suits.forEach(suit => { %>
+        <!-- Modals per ciascuna promozione -->
+        <% promotions.forEach(promotion => { %>
           <% if (isPrivileged || currentUserPriority <= 4) { %>
-            <!-- Modale modifica abito -->
-            <div class="modal fade" id="editModal<%= suit.id %>" tabindex="-1" aria-labelledby="editModalLabel<%= suit.id %>" aria-hidden="true">
+            <!-- Modale modifica promozione -->
+            <div class="modal fade" id="editModal<%= promotion.id %>" tabindex="-1" aria-labelledby="editModalLabel<%= promotion.id %>" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-dark text-white">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel<%= suit.id %>">Modifica Abito - <%= suit.name %></h5>
+                    <h5 class="modal-title" id="editModalLabel<%= promotion.id %>">Modifica Promozione - <%= promotion.name %></h5>
                     <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
                       <i class="fas fa-times"></i>
                     </button>
                   </div>
-                  <form action="/abiti/<%= suit.id %>/edit" method="post">
+                  <form action="/promozioni/<%= promotion.id %>/edit" method="post">
                     <div class="modal-body">
                       <!-- Messaggi di errore -->
-                      <% if (messages && messages.error && messages.modal === 'editModal' + suit.id) { %>
+                      <% if (messages && messages.error && messages.modal === 'editModal' + promotion.id) { %>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                           <% messages.error.forEach(function(message){ %>
                             <p style="white-space: pre-line;"><%= message %></p>
@@ -218,21 +218,21 @@
                       <% } %>
                       <!-- Campi del modulo -->
                       <div class="mb-3">
-                        <label for="name<%= suit.id %>" class="form-label">Nome</label>
-                        <input type="text" class="form-control bg-dark text-white" id="name<%= suit.id %>" name="name" value="<%= suit.name %>" required>
+                        <label for="name<%= promotion.id %>" class="form-label">Nome</label>
+                        <input type="text" class="form-control bg-dark text-white" id="name<%= promotion.id %>" name="name" value="<%= promotion.name %>" required>
                       </div>
                       <div class="mb-3">
-                        <label for="sellingPrice<%= suit.id %>" class="form-label">Prezzo di vendita</label>
-                        <input type="number" class="form-control bg-dark text-white" id="sellingPrice<%= suit.id %>" name="selling_price" value="<%= suit.selling_price %>" min="0" required>
+                        <label for="sellingPrice<%= promotion.id %>" class="form-label">Prezzo di vendita</label>
+                        <input type="number" class="form-control bg-dark text-white" id="sellingPrice<%= promotion.id %>" name="selling_price" value="<%= promotion.selling_price %>" min="0" required>
                       </div>
                       <div class="mb-3">
-                        <label for="purchasePrice<%= suit.id %>" class="form-label">Prezzo di acquisto</label>
-                        <input type="number" class="form-control bg-dark text-white" id="purchasePrice<%= suit.id %>" name="purchase_price" value="<%= suit.purchase_price %>" min="0" required>
+                        <label for="purchasePrice<%= promotion.id %>" class="form-label">Prezzo di acquisto</label>
+                        <input type="number" class="form-control bg-dark text-white" id="purchasePrice<%= promotion.id %>" name="purchase_price" value="<%= promotion.purchase_price %>" min="0" required>
                       </div>
                       <div class="mb-3 d-flex align-items-center">
-                        <label class="form-check-label me-3" for="onSale<%= suit.id %>">In Vendita</label>
+                        <label class="form-check-label me-3" for="onSale<%= promotion.id %>">In Vendita</label>
                         <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" id="onSale<%= suit.id %>" name="onSale" <%= suit.onSale ? 'checked' : '' %> style="transform: scale(1.25);">
+                          <input class="form-check-input" type="checkbox" id="onSale<%= promotion.id %>" name="onSale" <%= promotion.onSale ? 'checked' : '' %> style="transform: scale(1.25);">
                         </div>
                       </div>
                     </div>
@@ -246,18 +246,18 @@
             </div>
           <% } %>
           <% if (isPrivileged || currentUserPriority <= 3) { %>
-            <!-- Modale elimina abito -->
-            <div class="modal fade" id="deleteModal<%= suit.id %>" tabindex="-1" aria-labelledby="deleteModalLabel<%= suit.id %>" aria-hidden="true">
+            <!-- Modale elimina promozione -->
+            <div class="modal fade" id="deleteModal<%= promotion.id %>" tabindex="-1" aria-labelledby="deleteModalLabel<%= promotion.id %>" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-dark text-white">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel<%= suit.id %>">Elimina Abito - <%= suit.name %></h5>
+                    <h5 class="modal-title" id="deleteModalLabel<%= promotion.id %>">Elimina Promozione - <%= promotion.name %></h5>
                     <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
                       <i class="fas fa-times"></i>
                     </button>
                   </div>
                   <div class="modal-body">
-                    <% if (messages && messages.error && messages.modal === 'deleteModal' + suit.id) { %>
+                    <% if (messages && messages.error && messages.modal === 'deleteModal' + promotion.id) { %>
                       <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <% messages.error.forEach(function(message){ %>
                           <p style="white-space: pre-line;"><%= message %></p>
@@ -265,10 +265,10 @@
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Chiudi"></button>
                       </div>
                     <% } %>
-                    Sei sicuro di voler eliminare l'abito <strong><%= suit.name %></strong>?
+                    Sei sicuro di voler eliminare la promozione <strong><%= promotion.name %></strong>?
                   </div>
                   <div class="modal-footer">
-                    <form action="/abiti/<%= suit.id %>/delete" method="post">
+                    <form action="/promozioni/<%= promotion.id %>/delete" method="post">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                       <button type="submit" class="btn btn-danger">Elimina</button>
                     </form>
@@ -279,17 +279,17 @@
           <% } %>
         <% }) %>
 
-        <!-- Aggiunta nuovo abito (modale) -->
+        <!-- Aggiunta nuova promozione (modale) -->
         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-white">
               <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Aggiungi Nuovo Abito</h5>
+                <h5 class="modal-title" id="addModalLabel">Aggiungi Nuova Promozione</h5>
                 <button type="button" class="btn btn-link close-btn" data-bs-dismiss="modal" aria-label="Chiudi">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
-              <form action="/abiti" method="post">
+              <form action="/promozioni" method="post">
                 <div class="modal-body">
                   <% if (messages && messages.error && messages.modal === 'addModal') { %>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -320,16 +320,16 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                  <button type="submit" class="btn btn-primary">Aggiungi Abito</button>
+                  <button type="submit" class="btn btn-primary">Aggiungi Promozione</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
-        <!-- Fine modale aggiunta nuovo abito -->
+        <!-- Fine modale aggiunta nuova promozione -->
 
         <!-- Sezione paginazione e limit selector -->
-        <form method="get" action="/abiti" class="mb-1">
+        <form method="get" action="/promozioni" class="mb-1">
           <input type="hidden" name="searchName" value="<%= searchName %>">
           <input type="hidden" name="sortField" value="<%= sortField %>">
           <input type="hidden" name="sortOrder" value="<%= sortOrder %>">
@@ -353,14 +353,14 @@
                     if (currentPage > 1) {
                   %>
                     <li class="page-item">
-                      <a class="page-link" href="/abiti?page=<%= currentPage - 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Previous page">
+                      <a class="page-link" href="/promozioni?page=<%= currentPage - 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Previous page">
                         <i class="fas fa-angle-left"></i>
                       </a>
                     </li>
                   <% } %>
                   <% if (startPage > 1) { %>
                     <li class="page-item">
-                      <a class="page-link" href="/abiti?page=1&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>">1</a>
+                      <a class="page-link" href="/promozioni?page=1&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>">1</a>
                     </li>
                     <% if (startPage > 2) { %>
                       <li class="page-item disabled">
@@ -370,7 +370,7 @@
                   <% } %>
                   <% for (let i = startPage; i <= endPage; i++) { %>
                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                      <a class="page-link" href="/abiti?page=<%= i %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>"><%= i %></a>
+                      <a class="page-link" href="/promozioni?page=<%= i %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>"><%= i %></a>
                     </li>
                   <% } %>
                   <% if (endPage < totalPages) { %>
@@ -380,12 +380,12 @@
                       </li>
                     <% } %>
                     <li class="page-item">
-                      <a class="page-link" href="/abiti?page=<%= totalPages %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>"><%= totalPages %></a>
+                      <a class="page-link" href="/promozioni?page=<%= totalPages %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>"><%= totalPages %></a>
                     </li>
                   <% } %>
                   <% if (currentPage < totalPages) { %>
                     <li class="page-item">
-                      <a class="page-link" href="/abiti?page=<%= currentPage + 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Next page">
+                      <a class="page-link" href="/promozioni?page=<%= currentPage + 1 %>&limit=<%= limit %>&searchName=<%= encodeURIComponent(searchName || '') %>&sortField=<%= encodeURIComponent(sortField || '') %>&sortOrder=<%= encodeURIComponent(sortOrder || '') %>" aria-label="Next page">
                         <i class="fas fa-angle-right"></i>
                       </a>
                     </li>
@@ -395,7 +395,7 @@
             </div>
             <div class="col-12 col-md-4 mt-3 mt-md-0">
               <div class="d-flex justify-content-md-end align-items-center">
-                <label for="limit" class="me-2 mb-0">Abiti per pagina:</label>
+                <label for="limit" class="me-2 mb-0">Promozioni per pagina:</label>
                 <select name="limit" id="limit" class="form-select w-auto" onchange="this.form.submit()">
                   <option value="10" <%= limit == 10 ? 'selected' : '' %>>10</option>
                   <option value="50" <%= limit == 50 ? 'selected' : '' %>>50</option>
