@@ -1,0 +1,76 @@
+version: '3.9'
+
+x-deploy-defaults: &defaults
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    max_attempts: 5
+    window: 30s
+  update_config:
+    delay: 5s
+    order: start-first
+    failure_action: rollback
+
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: metro-biblioteca
+      BASE_URL: http://db.metro-biblioteca.it
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+    deploy:
+      <<: *defaults
+      mode: replicated
+      replicas: 1
+
+  webapp:
+    image: lmaggiolo16/metro-biblioteca:1.0.0
+    environment:
+      SEQ_DB: metro-biblioteca
+      SEQ_USER: postgres
+      SEQ_PW: root
+      PORT: 3000
+      DB_URL: postgres://postgres:root@database:5432/metro-biblioteca
+      DB_SSL: "false"
+      BASE_URL: http://webapp.metro-biblioteca.it
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:3000 || exit 1"]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+    depends_on:
+      - database
+    deploy:
+      <<: *defaults
+      mode: replicated
+      replicas: 2
+      resources:
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+        limits:
+          cpus: "0.50"
+          memory: 512M
+      labels:
+        - autoscaler=true
+        - autoscaler.target.cpu=75
+        - autoscaler.min=2
+        - autoscaler.max=10
+
+volumes:
+  pgdata:

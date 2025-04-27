@@ -1,0 +1,7 @@
+# Sorgenti da ignorare nel build Docker
+node_modules
+npm-debug.log
+.DS_Store
+.git
+.vscode
+*.test.js
