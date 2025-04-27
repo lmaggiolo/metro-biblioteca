@@ -1,6 +1,7 @@
 require('dotenv').config();
 const pkg = require('../package.json');
 const dbName = `${pkg.name}.db`; // Costruisce il nome del file database dinamicamente se sqlite
+const defaultSchema = process.env.DB_SCHEMA || 'public'
 
 module.exports = {
   // Porta di ascolto del server
@@ -17,8 +18,11 @@ module.exports = {
   database: process.env.DB_URL ? {
     dialect: process.env.DB_DIALECT,
     protocol: process.env.DB_PROTOCOL,
+    ssl: process.env.DB_SSL === 'true',
     url: process.env.DB_URL,
     logging: process.env.DB_LOGGING === 'true' ? console.log : false,
+    schema: defaultSchema,
+    searchPath: [defaultSchema],
   } : {
     dialect: 'sqlite',
     storage: process.env.DB_STORAGE || `./database/${dbName}`,
